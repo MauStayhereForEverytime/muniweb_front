@@ -1,0 +1,15 @@
+/* integridad-bulma.css */
+
+ 
+
+/* Aísla todo dentro del scope */
+.integridad-scope {
+  all: initial; /* limpia estilos heredados */
+  font-family: sans-serif; /* restaurar tipografía base */
+}
+
+.integridad-scope * {
+  all: unset;
+  all: revert; /* vuelve a estilos por defecto del navegador */
+  font-family: inherit;
+}

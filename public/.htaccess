@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+
+# No reescribas si el archivo físico o el directorio existe
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Reescribe todas las rutas a index.html
+RewriteRule ^ index.html [L]

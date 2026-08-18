@@ -1,0 +1,14 @@
+/* Estilo para el contenedor del gráfico */
+.chart-container {
+    width: 100%;  /* El contenedor ocupa el 100% del ancho disponible */
+    max-width: 1000px;  /* Limita el ancho máximo para evitar que se expanda demasiado */
+    margin: 0 auto;  /* Centra el contenedor */
+    padding: 20px;  /* Espaciado alrededor del gráfico */
+  }
+  
+  /* Asegura que el canvas se ajuste al tamaño de su contenedor */
+  canvas {
+    width: 100% !important;  /* El canvas ocupará todo el ancho disponible del contenedor */
+    height: auto !important; /* La altura se ajusta proporcionalmente */
+  }
+  

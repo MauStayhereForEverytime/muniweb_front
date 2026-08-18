@@ -1,0 +1,44 @@
+/* Estilo para el ítem principal */
+.menu-item {
+    position: relative;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .menu-item:hover {
+    background-color: #344b7d;
+    color: white; /* Azul oscuro */
+   
+  }
+  
+  /* Submenú oculto por defecto */
+  .submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-top: 0;
+    width: 250px;
+    background-color: #ffff; /* Azul oscuro */
+    color: #23355B;
+    list-style: none;
+    padding: 0;
+    display: none; /* Oculta el submenú */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .submenu li {
+    padding: 8px 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submenu li:hover {
+    background-color: #344b7d;
+    color:white
+  }
+  
+  /* Mostrar el submenú al hacer hover */
+  .menu-item:hover .submenu {
+    display: block;
+  }
+  

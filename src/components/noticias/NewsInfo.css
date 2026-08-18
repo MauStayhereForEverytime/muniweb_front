@@ -1,0 +1,166 @@
+/* Contenedor principal de la página */
+.news-info-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin-top: 100px;
+}
+
+/* Contenedor del contenido de la noticia centrado */
+.news-info-container {
+  max-width: 60%; /* Ocupa el 70% del ancho */
+  margin: 0 auto; /* Centrado horizontal */
+  padding: 20px;
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+
+/* Contenedor de las acciones (botones de edición y eliminación) */
+.actions-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+/* Estilos para los botones */
+.action-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo para el botón de eliminar */
+.bg-red-500 {
+  background-color: #e74c3c;
+}
+
+.bg-red-500:hover {
+  background-color: #c0392b;
+}
+
+/* Estilo para el botón de editar */
+.bg-yellow-500 {
+  background-color: #f39c12;
+}
+
+.bg-yellow-500:hover {
+  background-color: #e67e22;
+}
+
+/* Estilo para el formulario de edición */
+.edit-form input,
+.edit-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.edit-form button {
+  margin-top: 20px;
+  background-color: #27ae60;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-form button:hover {
+  background-color: #2ecc71;
+}
+
+/* Estilos de la noticia */
+.news-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.news-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.news-description {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.news-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.news-date {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Para pantallas pequeñas */
+@media (max-width: 768px) {
+  .news-info-container {
+    max-width: 90%; /* Ocupa más espacio en pantallas pequeñas */
+  }
+
+  .news-title {
+    font-size: 1.5rem;
+  }
+
+  .news-description {
+    font-size: 0.95rem;
+  }
+
+  .news-content p {
+    font-size: 1rem;
+  }
+
+  .news-date {
+    font-size: 0.85rem;
+  }
+
+  .actions-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-button {
+    font-size: 0.9rem;
+    width: 100%;
+    padding: 12px 0;
+  }
+}
+
+.random-news-container {
+  position: fixed;
+  top: 33%; /* Ajusta esto según lo que necesites */
+  right: 20px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  max-width: 280px;
+  width: 100%;
+}
+
+.random-news-container a {
+  font-size: 14px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.random-news-container a:hover {
+  text-decoration: underline;
+}

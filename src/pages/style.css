@@ -1,0 +1,128 @@
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+/* style.css */
+
+/* Evitar que el carrusel se desplace hacia la derecha */
+body, html {
+  overflow-x: hidden; /* Elimina el desbordamiento horizontal */
+}
+
+/* Asegurar que el contenedor del carrusel esté centrado */
+.slick-slide {
+  display: flex !important; /* Asegura que el contenido esté centrado */
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilos para las imágenes del carrusel */
+.slick-slide img {
+  width: 100%;  /* Ocupa todo el ancho del contenedor */
+  height: 420px; /* Mantiene la proporción de la imagen */
+  object-fit: cover; /* Cubre el área sin deformar la imagen */
+}
+
+@media (min-width: 768px) {
+  .slick-slide img {
+    height: 480px;
+  }
+}
+
+/* Estilos de los botones de navegación */
+.slick-prev, .slick-next {
+  position: absolute;
+  z-index: 10;
+  top: 50%;  /* Centrado verticalmente */
+  width: 44px;
+  height: 44px;
+  background-color: rgba(35, 53, 91, 0.75);  /* Azul maynas translúcido */
+  border-radius: 9999px;
+  transform: translateY(-50%);  /* Centrado vertical */
+}
+
+.slick-prev {
+  left: 16px; /* Ubica la flecha izquierda */
+}
+
+.slick-next {
+  right: 16px; /* Ubica la flecha derecha */
+}
+
+.slick-prev:hover, .slick-next:hover {
+  background-color: #AB0A0A; /* Rojo institucional al hover */
+}
+
+.slick-prev:before, .slick-next:before {
+  color: #ffffff;
+  font-size: 20px;
+}
+
+/* Agrega esto en tu archivo CSS */
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.10); /* Inicia más pequeño */
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1); /* Tamaño final */
+  }
+}
+
+.modal-zoom-in {
+  animation: zoomIn 0.5s ease-out forwards; /* Aparece en 0.5 segundos */
+}
+
+.testimonios-container {
+  background-color: #f8f9fa;
+  padding: 40px 0;
+  margin-top: 20px;
+}
+
+.testimonios-container1 {
+  background-color: #f8f9fa;
+  padding: 40px 0;
+  margin-top: 60px;
+}
+
+form {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  background-color: #ccc;
+}
+
+.testimonios-list {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.testimonial-item {
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-item p {
+  margin-bottom: 8px;
+}
+
+.testimonial-item .font-bold {
+  font-size: 1.1rem;
+}
+
+.testimonial-item .text-sm {
+  font-size: 0.9rem;
+  color: #777;
+}

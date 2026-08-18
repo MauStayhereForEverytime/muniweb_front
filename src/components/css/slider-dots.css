@@ -1,0 +1,20 @@
+/* Color base de los dots */
+.slick-dots li button:before {
+  color: rgba(35, 53, 91, 0.4) !important; /* Azul maynas translúcido */
+  opacity: 1;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+/* Dot activo */
+.slick-dots li.slick-active button:before {
+  color: #23355B !important; /* Azul maynas */
+  opacity: 1;
+  transform: scale(1.3);
+}
+
+/* Hover sobre los dots */
+.slick-dots li button:hover:before {
+  color: #AB0A0A !important; /* Rojo institucional */
+  opacity: 1;
+}

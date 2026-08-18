@@ -1,0 +1,96 @@
+#integridad-scope .hero {
+  display: block;
+  position: relative;
+  padding: 3rem 1.5rem;
+}
+
+#integridad-scope .section {
+  padding: 3rem 1.5rem;
+}
+
+#integridad-scope .title {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+#integridad-scope .columns {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -0.75rem;
+}
+
+#integridad-scope .column {
+  flex: 1;
+  padding: 0.75rem;
+}
+
+#integridad-scope .table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+
+ 
+/* Todos los enlaces dentro de la tabla se ven como botón */
+#integridad-scope table a {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background-color: #0d2b50ff; /* azul oscuro */
+  border: 1px solid #0d2b50ff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#integridad-scope table a:hover {
+  background-color: #133d73; /* azul más claro */
+  border-color: #133d73;
+}
+
+
+/* Contenedor de filtros */
+#integridad-scope .filtros input,
+#integridad-scope .filtros select {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Placeholder en inputs */
+#integridad-scope .filtros input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+/* Hover y focus */
+#integridad-scope .filtros input:focus,
+#integridad-scope .filtros select:focus {
+  border-color: #0d2b50ff;
+  box-shadow: 0 0 5px rgba(13, 43, 80, 0.3);
+  outline: none;
+}
+
+/* Select estilizado */
+#integridad-scope .filtros select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2rem;
+}
+
+
+.fecha-azul {
+  color: #0056b3 !important;
+  font-weight: bold;
+}
