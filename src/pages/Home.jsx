@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchNews } from '../services/newsService';
+import { fetchNews, mediaUrl } from '../services/newsService';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -14,8 +14,8 @@ import Testimonios from '../components/home/testimonios/Testimonios';
 import conferencia from "./../assets/img/conferencia.jpg";
 import './style.css';
 
-const getImageSrc = (base64, fallback) =>
-  base64 ? `data:image/jpeg;base64,${base64}` : fallback;
+const getImageSrc = (path, fallback) =>
+  path ? mediaUrl(path) : fallback;
 
 const formatDate = (value) => {
   if (!value) return 'Fecha no disponible';

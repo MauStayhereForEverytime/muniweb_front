@@ -11,7 +11,8 @@ const Blog = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newContent, setNewContent] = useState('');
-  const [newImage, setNewImage] = useState('');
+  const [newImage, setNewImage] = useState(null);
+const [newImagePreview, setNewImagePreview] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
 
   useEffect(() => {
@@ -22,15 +23,11 @@ const Blog = () => {
     getBlogs();
   }, []);
 
-  // ✅ Convertir imagen seleccionada a base64
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setNewImage(reader.result); // Base64 result
-    };
     if (file) {
-      reader.readAsDataURL(file);
+      setNewImage(file);
+      setNewImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -43,14 +40,12 @@ const Blog = () => {
     }
 
     const newBlog = {
-      fields: {
-        new_txt_urlimage: newImage,
-        new_txt_tittle: newTitle,
-        new_txt_description: newDescription,
-        new_txt_content: newContent,
-        new_txt_state: 'ACTIVO',
-        ctn_int_id: 3,
-      },
+      new_txt_urlimage: newImage,
+      new_txt_tittle: newTitle,
+      new_txt_description: newDescription,
+      new_txt_content: newContent,
+      new_txt_state: 'ACTIVO',
+      ctn_int_id: 3,
     };
 
     try {
@@ -61,7 +56,8 @@ const Blog = () => {
         setNewTitle('');
         setNewDescription('');
         setNewContent('');
-        setNewImage('');
+        setNewImage(null);
+        setNewImagePreview(null);
         setIsFormVisible(false);
       }
     } catch (error) {
@@ -94,25 +90,14 @@ const Blog = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      const base64String = event.target.result.split(',')[1]; // Solo base64
-                      setNewImage(base64String); // Guardamos solo la parte base64
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                }}
+                onChange={handleImageUpload}
                 className="w-full p-2 border border-gray-300 rounded-md"
                 required
               />
 
-              {/* Mostrar la imagen con prefijo */}
-              {newImage && (
+              {newImagePreview && (
                 <img
-                  src={`data:image/jpeg;base64,${newImage}`}
+                  src={newImagePreview}
                   alt="Previsualización"
                   className="w-24 h-24 object-cover mt-2 rounded"
                 />

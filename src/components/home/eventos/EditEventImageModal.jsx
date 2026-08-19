@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { editEventImage } from '../../../services/eventService';
 
 const EditEventImageModal = ({ imageId, closeModal, refreshImages, imageDataInitial }) => {
-  const [editedImage, setEditedImage] = useState(imageDataInitial);
+  const [editedImage, setEditedImage] = useState({
+    ...imageDataInitial,
+    ima_txt_urlpath: null,
+  });
 
   const handleEditImage = async () => {
     try {
       await editEventImage(imageId, editedImage);
-      refreshImages();  // Refrescar las imágenes después de editar
-      closeModal();  // Cerrar el modal
+      refreshImages();
+      closeModal();
     } catch (error) {
       console.error('Error editing event image:', error);
     }
@@ -21,44 +24,31 @@ const EditEventImageModal = ({ imageId, closeModal, refreshImages, imageDataInit
       <div className="space-y-4">
         <input
           type="text"
-          value={editedImage.ima_txt_name}
+          value={editedImage.ima_txt_name || ''}
           onChange={(e) => setEditedImage({ ...editedImage, ima_txt_name: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        
+
         <input
           type="text"
-          value={editedImage.ima_txt_description}
+          value={editedImage.ima_txt_description || ''}
           onChange={(e) => setEditedImage({ ...editedImage, ima_txt_description: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        {/* <input
-          type="text"
-          value={editedImage.ima_txt_urlpath}
-          onChange={(e) => setEditedImage({ ...editedImage, ima_txt_urlpath: e.target.value })}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        /> */}
         <input
           type="file"
           accept="image/*"
           onChange={(e) => {
             const file = e.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (event) => {
-                const base64String = event.target.result.split(',')[1]; // Obtener solo el Base64
-                setEditedImage({ ...editedImage, ima_txt_urlpath: base64String });
-              };
-              reader.readAsDataURL(file);
-            }
+            if (file) setEditedImage({ ...editedImage, ima_txt_urlpath: file });
           }}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        {/* Nuevo campo URL de gob */}
+
         <input
           type="text"
-          value={editedImage.ima_txt_urlgob}
+          value={editedImage.ima_txt_urlgob || ''}
           onChange={(e) => setEditedImage({ ...editedImage, ima_txt_urlgob: e.target.value })}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />

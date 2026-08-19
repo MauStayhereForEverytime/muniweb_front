@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { fetchEventImages } from '../../../services/eventService';
+import { useEffect, useState } from 'react';
+import { fetchEventImages, mediaUrl } from '../../../services/eventService';
 import { Link } from 'react-router-dom';
 import SectionHeader from '../SectionHeader';
 
@@ -29,7 +29,7 @@ const Eventos = () => {
             No hay eventos disponibles
           </div>
         ) : images.slice(0, 2).map((image) => {
-          const imageSrc = `data:image/jpeg;base64,${image.ima_txt_urlpath}`;
+          const imageSrc = mediaUrl(image.ima_txt_urlpath);
           const altText = image.ima_txt_name;
 
           const card = (

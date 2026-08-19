@@ -7,6 +7,57 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] — Sesión Slider + migración a /media/
+
+### Added
+- Nueva sección **Carrusel** en el panel admin (`Dashboard > Imágenes > Carrusel`), con CRUD completo (agregar/editar/eliminar) y validación de dimensiones de imagen al subir.
+- Validación de tamaño/peso en el admin del carrusel (`CarruselImages.jsx`): lee `naturalWidth/Height` con `Image()` y muestra aviso visual verde/rojo.
+- **Checkbox "Mostrar título en el slider"** en admin carrusel (form agregar + modal editar), persistido en el backend como `Image.ima_boo_showtitle`.
+- `src/components/administrable/imagenes/CarruselImages.jsx` (componente nuevo, clona patrón de `Modal1.jsx`).
+- `src/components/home/carrousel/home-carousel.css` (CSS scope nuevo con overrides de `slick-carousel`).
+- Helper `mediaUrl(path)` exportado desde `carrouselService.js`, `newsService.js`, `innovationService.js`, `eventService.js` (construye URL absoluta al backend).
+- `doc/SESSION_SLIDER.md` con el resumen completo de los cambios de esta sesión.
+
+### Changed
+- **`Carrousel.jsx` (slider público del Home)**:
+  - Wrapper `max-w-7xl mx-auto h-[420px] sm:h-[480px] md:h-[560px] lg:h-[640px] rounded-xl` (antes full-bleed deformado).
+  - Eliminado CRUD inline (botones "Agregar/Editar/Eliminar" cuando había login). Solo lectura.
+  - Slider explícitamente horizontal: `vertical:false`, `verticalSwiping:false`, `rtl:false`, `fade:false`, `autoplay:true (5s)`.
+  - Flechas personalizadas `<PrevArrow />`/`<NextArrow />` con `FaChevronLeft/Right`.
+  - **Título fijo** en esquina inferior izquierda del slider (overlay fuera de los slides): `bg-maynas-navy/85 backdrop-blur-sm rounded-lg shadow-lg`, no cambia con la imagen activa.
+  - `src` ahora `mediaUrl(ima_txt_urlpath)` en vez de `data:image/jpeg;base64,...`.
+- **`Dashboard.jsx`**: submenú "Imágenes" ahora tiene **Carrusel** + Modal de Inicio. Removido `import Home` sin usar.
+- **`CarruselImages.jsx`**: formulario "Agregar Imagen" siempre visible (antes solo si `images.length === 0`).
+- Servicios (`carrouselService`, `newsService`, `innovationService`, `eventService`, `blogService`): ahora envían `FormData` con el `File` real, no JSON con base64. **Guarda `instanceof File`** para no enviar strings cuando no hay archivo nuevo.
+- **Componentes admin + público**: `CarruselImages.jsx`, `Modal1.jsx`, `Eventos.jsx`, `EventosInfo.jsx`, `EventosTodos.jsx`, `Modal.jsx`, `Home.jsx`, `NewsList.jsx`, `NewsInfo.jsx`, `NewsItem.jsx`, `Innovation.jsx`, `InnovationList.jsx`, `InnovationInfo.jsx`, `Blog.jsx`, `BlogList.jsx`, `BlogInfo.jsx`, `AddEventImageModal.jsx`, `EditEventImageModal.jsx`: ahora usan `mediaUrl()` para `src` y `File` para upload. Previews con `URL.createObjectURL`.
+- Payloads: ya no se envía `fields: {...}` anidado para carrusel/modal/eventos; se envía objeto plano.
+
+### Fixed
+- **Slider deformado en pantalla completa**: el slider full-bleed estiraba la imagen. Ahora con `max-w-7xl` y `rounded-xl` mantiene proporción y se ve coherente con el resto del sitio.
+- **Stack vertical de slides**: la cadena de alturas del slider colapsaba (sin `height: 100%` forzado en `.slick-list/track/slide`), produciendo que las imágenes se apilaran verticalmente. CSS scope nuevo lo corrige.
+- **Caption cortado/pegado al borde**: el caption se veía mal en pantalla completa. Ahora título es overlay fijo a la izquierda con `backdrop-blur` + `bg-maynas-navy/85`.
+- **Título saliéndose del marco**: el caption estaba dentro de cada `<div>` de slide sin altura → se posicionaba al fondo del viewport. Resuelto extrayéndolo del slide y poniéndolo como overlay sobre el contenedor del slider.
+- **Estilo boletin filtrado al Home**: `boletin.css` global aplicaba `border-radius:20px; border:4px solid #fff; box-shadow` a `.slick-slide img`. CSS scope `.home-carousel-scope` sobreescribe con `!important`.
+- **`The submitted data was not a file`** en edición de imágenes: `editImageData.ima_txt_urlpath` mantenía URL string de la imagen existente al abrir modal de edición, se enviaba al backend `FileField` que lo rechazaba. Fix: `setEditImage({ ...image, ima_txt_urlpath: null })` al abrir modal + guarda `instanceof File` en todos los servicios.
+
+### Removed
+- Botones de edición/CRUD del slider público del Home (movidos al panel admin).
+
+### Deprecated
+- Envío de imágenes como base64 en payloads JSON. Ahora siempre `multipart/form-data` con `File`.
+
+### Security
+- Imágenes ya no se almacenan como `TextField` con base64 en la DB, ahora son archivos en `MEDIA_ROOT` (`/media/{images,news,innovation}/`). Imposible inyectar HTML/scripts vía base64.
+
+### Notes
+- Recomendación de tamaño para imágenes del slider: **1920×720 px** (ratio 2.67:1), mínimo 1600×600, máximo 2560×1080, peso máx 3 MB.
+- Campo nuevo `Image.ima_boo_showtitle` (default `True`): controla si el título se muestra en el slider público. Si `False`, el caption no se renderiza.
+- Imágenes detectadas en `media/images/` actualmente:
+  - `serey-kim-xjrvTc52xYc-unsplash.jpg` → **7708×3036 px, 2.8 MB** ← excede dimensiones, redimensionar.
+  - `ChatGPT_Image_18_ago_2026_13_50_40.png` → **1717×916 px, 2.3 MB** ← OK.
+
+---
+
 ## [Unreleased] — Sesión de migración del VPS
 
 ### Added

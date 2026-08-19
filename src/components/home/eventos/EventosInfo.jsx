@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchEventImageById } from '../../../services/eventService';
+import { fetchEventImageById, mediaUrl } from '../../../services/eventService';
 import Header from '../../Header';
 import Footer from '../../Footer';
-import '../../blog/BlogInfo.css'; // Asegúrate de tener los estilos
+import '../../blog/BlogInfo.css';
 
 const EventosInfo = () => {
   const { id } = useParams();
@@ -32,7 +32,7 @@ const EventosInfo = () => {
         <div className="news-info">
           {image.fields.ima_txt_urlpath && (
             <img
-              src={`data:image/jpeg;base64,${image.fields.ima_txt_urlpath}`}
+              src={mediaUrl(image.fields.ima_txt_urlpath)}
               alt={image.fields.ima_txt_name}
               className="news-image"
             />

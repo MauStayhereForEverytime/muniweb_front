@@ -7,9 +7,9 @@ import CompromisoForm from '../components/administrable/compromisos/CompromisoFo
 // import ActasForm from '../components/administrable/documents/Actasform';
 import Dashboard1 from '../components/administrable/dashboard/Dashboard1';
 import Modal1 from '../components/administrable/imagenes/Modal1';
+import CarruselImages from '../components/administrable/imagenes/CarruselImages';
 import Testimonios1 from '../components/administrable/testimonios/Testimonios1';
 import Usuarios from '../components/administrable/usuarios/Usuarios';
-import Home from './Home';
 
 // Obtener ícono basado en nombre
 const getIcon = (iconName) => {
@@ -50,6 +50,12 @@ const Dashboard = () => {
       label: 'Imágenes',
       icon: 'FaImages',
       items: [
+        {
+          label: 'Carrusel',
+          icon: 'FaImages',
+          content: <CarruselImages />,
+          items: null,
+        },
         {
           label: 'Modal de Inicio',
           icon: 'FaImages',

@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL;
-const API_URL = apiUrl+'event-images';  // Ruta para las imágenes de eventos
+const API_URL = apiUrl + 'event-images';
 
-// Obtener imágenes de eventos
+export const mediaUrl = (path) => (path ? `${apiUrl.replace(/\/$/, '')}${path}` : '');
+
 export const fetchEventImages = async () => {
   try {
     const response = await axios.get(API_URL);
@@ -14,10 +15,17 @@ export const fetchEventImages = async () => {
   }
 };
 
-// Agregar una nueva imagen de evento
+const buildFormData = (imageData) => {
+  const fd = new FormData();
+  if (imageData.ima_txt_name !== undefined) fd.append('ima_txt_name', imageData.ima_txt_name || '');
+  if (imageData.ima_txt_description !== undefined) fd.append('ima_txt_description', imageData.ima_txt_description || '');
+  if (imageData.ima_txt_urlpath instanceof File) fd.append('ima_txt_urlpath', imageData.ima_txt_urlpath);
+  return fd;
+};
+
 export const addEventImage = async (imageData) => {
   try {
-    const response = await axios.post(`${API_URL}/add`, imageData);
+    const response = await axios.post(`${API_URL}/add`, buildFormData(imageData));
     return response.data;
   } catch (error) {
     console.error('Error adding event image:', error);
@@ -25,10 +33,9 @@ export const addEventImage = async (imageData) => {
   }
 };
 
-// Editar imagen de evento
 export const editEventImage = async (id, updatedData) => {
   try {
-    const response = await axios.put(`${API_URL}/edit/${id}`, updatedData);
+    const response = await axios.put(`${API_URL}/edit/${id}`, buildFormData(updatedData));
     return response.data;
   } catch (error) {
     console.error('Error editing event image:', error);
@@ -36,7 +43,6 @@ export const editEventImage = async (id, updatedData) => {
   }
 };
 
-// Eliminar imagen de evento
 export const deleteEventImage = async (id) => {
   try {
     const response = await axios.delete(`${API_URL}/delete/${id}`);
@@ -47,15 +53,11 @@ export const deleteEventImage = async (id) => {
   }
 };
 
-// Función para obtener una imagen específica por ID
 export const fetchEventImageById = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/${id}`);
-    
-    // Parsear el string JSON a un objeto
-    const data = JSON.parse(response.data); // Aquí parseamos la respuesta
-    return data[0]; // Retorna el primer elemento del array
-
+    const data = JSON.parse(response.data);
+    return data[0];
   } catch (error) {
     console.error('Error fetching event image by ID:', error);
     return null;

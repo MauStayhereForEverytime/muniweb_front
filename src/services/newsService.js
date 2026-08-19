@@ -1,28 +1,24 @@
 import axios from 'axios';
 
-// Función para obtener todas las noticias
-
 const apiUrl = import.meta.env.VITE_API_URL;
+
+export const mediaUrl = (path) => (path ? `${apiUrl.replace(/\/$/, '')}${path}` : '');
+
 export const fetchNews = async () => {
   try {
-    const response = await axios.get(apiUrl+'api/news');
-    const data = JSON.parse(response.data);  // Parseamos el string JSON para convertirlo en un array
-    console.log("Data parsed:", data);  // Asegúrate de que el resultado después de parsear sea un array
-    return data;  // Ahora deberíamos tener un array de objetos
+    const response = await axios.get(apiUrl + 'api/news');
+    const data = JSON.parse(response.data);
+    return data;
   } catch (error) {
     console.error('Error fetching news:', error);
-    return [];  // En caso de error, devolvemos un array vacío
+    return [];
   }
 };
 
-// Función para obtener una noticia por su ID
 export const fetchNewsById = async (id) => {
   try {
-    console.log(`Fetching news with ID: ${id}`);  // Log para verificar el ID que se está solicitando
-    const response = await axios.get(apiUrl+`api/news/${id}`);
-    console.log("Response received:", response);  // Verifica la respuesta completa
-    const data = JSON.parse(response.data);  // Si es necesario, parsear el JSON
-    console.log("Parsed data:", data);  // Verifica los datos después de parsearlos
+    const response = await axios.get(apiUrl + `api/news/${id}`);
+    const data = JSON.parse(response.data);
     return data;
   } catch (error) {
     console.error('Error fetching news by ID:', error.response ? error.response.data : error.message);
@@ -30,39 +26,45 @@ export const fetchNewsById = async (id) => {
   }
 };
 
-// **Función para crear una nueva noticia**
+const buildFormData = (payload) => {
+  const fd = new FormData();
+  if (payload.new_txt_tittle !== undefined) fd.append('new_txt_tittle', payload.new_txt_tittle || '');
+  if (payload.new_txt_description !== undefined) fd.append('new_txt_description', payload.new_txt_description || '');
+  if (payload.new_txt_content !== undefined) fd.append('new_txt_content', payload.new_txt_content || '');
+  if (payload.new_txt_urlimage instanceof File) fd.append('new_txt_urlimage', payload.new_txt_urlimage);
+  if (payload.ctn_int_id !== undefined) fd.append('ctn_int_id', payload.ctn_int_id);
+  if (payload.new_txt_state !== undefined) fd.append('new_txt_state', payload.new_txt_state);
+  return fd;
+};
+
 export const createNews = async (newNews) => {
   try {
-    const response = await axios.post(apiUrl+'news/add', newNews);
-    console.log("New news added:", response.data);  // Log para verificar la respuesta de la creación
+    const fd = buildFormData(newNews);
+    const response = await axios.post(apiUrl + 'news/add', fd);
     return response.data;
   } catch (error) {
     console.error('Error creating news:', error);
-    return null;  // Si ocurre un error, devuelve null
+    return null;
   }
 };
 
-// **Función para eliminar una noticia**
 export const deleteNews = async (id) => {
   try {
-    const response = await axios.delete(apiUrl+`news/${id}/delete/`);
-    console.log("News deleted:", response.data);  // Log para verificar la respuesta de la eliminación
-    return response.status === 204;  // Retorna true si la respuesta es 204 No Content (eliminación exitosa)
+    const response = await axios.delete(apiUrl + `news/${id}/delete/`);
+    return response.status === 204;
   } catch (error) {
     console.error('Error deleting news:', error);
-    return false;  // Si ocurre un error, devuelve false
+    return false;
   }
 };
 
-
-// **Función para editar una noticia**
 export const updateNews = async (id, updatedNews) => {
   try {
-    const response = await axios.put(apiUrl+`news/${id}/edit/`, updatedNews);
-    console.log("News updated:", response.data);  // Log para verificar la respuesta de la actualización
-    return response.data;  // Retorna los datos actualizados de la noticia
+    const fd = buildFormData(updatedNews);
+    const response = await axios.put(apiUrl + `news/${id}/edit/`, fd);
+    return response.data;
   } catch (error) {
     console.error('Error updating news:', error);
-    return null;  // Si ocurre un error, devuelve null
+    return null;
   }
 };

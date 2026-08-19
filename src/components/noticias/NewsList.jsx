@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchNews, createNews } from '../../services/newsService'; // Función para obtener noticias
-import NewsItem from './NewsItem';  // Componente para mostrar cada noticia individual
-import Spinner from './Spinner';  // Importamos el spinner
+import { fetchNews, createNews, mediaUrl } from '../../services/newsService';
+import NewsItem from './NewsItem';
+import Spinner from './Spinner';
 import QuillEditor from './QuillEditor';
 
 const NewsList = () => {
@@ -15,7 +15,7 @@ const NewsList = () => {
   const [newTitle, setNewTitle] = useState(''); // Título de la nueva noticia
   const [newDescription, setNewDescription] = useState(''); // Descripción
   const [newContent, setNewContent] = useState(''); // Contenido
-  const [newImage, setNewImage] = useState(''); // Imagen de la noticia
+  const [newImage, setNewImage] = useState(null); // Archivo de imagen de la noticia
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
   useEffect(() => {
@@ -61,29 +61,27 @@ const NewsList = () => {
     }
 
     const newNews = {
-      fields: {
-        new_txt_urlimage: newImage,
-        new_txt_tittle: newTitle,
-        new_txt_description: newDescription,
-        new_txt_content: newContent,
-        new_txt_state: 'ACTIVO',
-      },
+      new_txt_urlimage: newImage,
+      new_txt_tittle: newTitle,
+      new_txt_description: newDescription,
+      new_txt_content: newContent,
+      new_txt_state: 'ACTIVO',
     };
 
     try {
-      setIsLoading(true); // Mostramos el cargador
-      const createdNews = await createNews(newNews); // Llamamos para crear la noticia
+      setIsLoading(true);
+      const createdNews = await createNews(newNews);
 
       if (createdNews) {
-        setSecondaryNews([createdNews, ...secondaryNews]); // Actualizamos las noticias secundarias
+        setSecondaryNews([createdNews, ...secondaryNews]);
         setNewTitle('');
         setNewDescription('');
         setNewContent('');
-        setNewImage('');
-        setIsFormVisible(false); // Ocultamos el formulario
+        setNewImage(null);
+        setIsFormVisible(false);
 
         setTimeout(() => {
-          setIsLoading(false); // Desactivamos el cargador después de un segundo
+          setIsLoading(false);
         }, 1000);
       }
     } catch (error) {
@@ -108,9 +106,9 @@ const NewsList = () => {
             <Link to={`/news/${mainNews.pk}`} className="block">
               {mainNews.fields && mainNews.fields.new_txt_urlimage && (
                 <img
-                  src={`data:image/jpeg;base64,${mainNews.fields.new_txt_urlimage}`}
+                  src={mediaUrl(mainNews.fields.new_txt_urlimage)}
                   alt={mainNews.fields.new_txt_tittle}
-                  className="w-full h-96 object-cover rounded-lg"  // Ajusté la altura de la imagen
+                  className="w-full h-96 object-cover rounded-lg"
                 />
               )}
               <div className="mt-3 text-black font-bold text-sm">{truncateText(mainNews.fields?.new_txt_tittle || "AGREGADO CORRECTAMENTE")}</div>
@@ -126,9 +124,9 @@ const NewsList = () => {
               <Link to={`/news/${item.pk}`} className="block">
                 {item.fields && item.fields.new_txt_urlimage && (
                   <img
-                    src={`data:image/jpeg;base64,${item.fields.new_txt_urlimage}`}
+                    src={mediaUrl(item.fields.new_txt_urlimage)}
                     alt={item.fields.new_txt_tittle}
-                    className="w-full h-24 object-cover rounded-lg"  // Imagen más pequeña
+                    className="w-full h-24 object-cover rounded-lg"
                   />
                 )}
                 <div className="mt-2 text-black text-xs font-bold">{truncateText(item.fields?.new_txt_tittle || "AGREGADO CORRECTAMENTE")}</div>
@@ -159,14 +157,7 @@ const NewsList = () => {
               accept="image/*"
               onChange={(e) => {
                 const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (event) => {
-                    const base64String = event.target.result.split(',')[1]; // Obtener solo el Base64
-                    setNewImage(base64String);
-                  };
-                  reader.readAsDataURL(file);
-                }
+                if (file) setNewImage(file);
               }}
               className="w-full p-2 border border-gray-300 rounded-md"
               required

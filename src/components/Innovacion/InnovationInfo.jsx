@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Íconos de edición y eliminación
-import QuillEditor from '../noticias/QuillEditor'; // Asegúrate de la importación correcta
-import Header from '../Header'; // Agregamos el Header
-import Footer from '../Footer'; // Agregamos el Footer
-import { fetchInnovationById, deleteInnovation, updateInnovation } from '../../services/innovationService'; // Importamos los servicios correspondientes
-import './InnovationInfo.css'; // Asegúrate de tener el CSS para los estilos personalizados
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import QuillEditor from '../noticias/QuillEditor';
+import Header from '../Header';
+import Footer from '../Footer';
+import { fetchInnovationById, deleteInnovation, updateInnovation, mediaUrl } from '../../services/innovationService';
+import './InnovationInfo.css';
 
 const InnovationInfo = () => {
   const { id } = useParams();
@@ -14,18 +14,18 @@ const InnovationInfo = () => {
   const [isEditing, setIsEditing] = useState(false);  // Para controlar si está en modo de edición
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedDescription, setUpdatedDescription] = useState('');
-  const [updatedImage, setUpdatedImage] = useState('');
+  const [updatedImage, setUpdatedImage] = useState(null);
 
   useEffect(() => {
     const getInnovation = async () => {
       const data = await fetchInnovationById(id);
       console.log(data); // Asegúrate de que los datos estén correctos
-      if (data && data[0]) {  // Verifica si la respuesta tiene datos
-        const innovation = data[0].fields;  // Accedemos a los datos dentro de `fields`
+      if (data && data[0]) {
+        const innovation = data[0].fields;
         setInnovation(innovation);
         setUpdatedTitle(innovation.inn_txt_tittle);
         setUpdatedDescription(innovation.inn_txt_description);
-        setUpdatedImage(innovation.inn_txt_image);
+        setUpdatedImage(null);
       }
     };
   
@@ -49,11 +49,9 @@ const InnovationInfo = () => {
   // Función para manejar la edición
   const handleEdit = async () => {
     const updatedData = {
-      fields: {
-        inn_txt_tittle: updatedTitle,
-        inn_txt_description: updatedDescription,  // Usamos QuillEditor para editar la descripción
-        inn_txt_image: updatedImage,
-      },
+      inn_txt_tittle: updatedTitle,
+      inn_txt_description: updatedDescription,
+      inn_txt_image: updatedImage,
     };
 
     const success = await updateInnovation(id, updatedData);
@@ -110,14 +108,8 @@ const InnovationInfo = () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  const file = e.target.files[0]; // Obtén el archivo seleccionado
-                  if (file) {
-                    const reader = new FileReader(); // Creamos un FileReader
-                    reader.onload = (event) => {
-                      setUpdatedImage(event.target.result.split(',')[1]); // Guardamos solo el Base64 sin el prefijo "data:image/jpeg;base64,"
-                    };
-                    reader.readAsDataURL(file); // Leemos el archivo como un URL de datos (Base64)
-                  }
+                  const file = e.target.files[0];
+                  if (file) setUpdatedImage(file);
                 }}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
@@ -148,7 +140,7 @@ const InnovationInfo = () => {
           // Vista normal de la innovación
           <div className="innovation-info">
             {innovation.inn_txt_image && (
-              <img src={`data:image/jpeg;base64,${innovation.inn_txt_image}`} alt={innovation.inn_txt_tittle} className="innovation-image" />
+              <img src={mediaUrl(innovation.inn_txt_image)} alt={innovation.inn_txt_tittle} className="innovation-image" />
             )}
             <h1 className="innovation-title">{innovation.inn_txt_tittle}</h1>
             <div className="innovation-content" dangerouslySetInnerHTML={{ __html: innovation.inn_txt_description }} />

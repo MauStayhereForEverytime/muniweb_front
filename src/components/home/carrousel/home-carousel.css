@@ -1,0 +1,47 @@
+.home-carousel-scope {
+  width: 100%;
+}
+
+.home-carousel-scope .slick-slider,
+.home-carousel-scope .slick-list,
+.home-carousel-scope .slick-track,
+.home-carousel-scope .slick-slide {
+  height: 100%;
+}
+
+.home-carousel-scope .slick-list {
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.home-carousel-scope .slick-slide {
+  width: 100%;
+}
+
+.home-carousel-scope .slick-slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  display: block;
+}
+
+.home-carousel-scope .slick-dots {
+  bottom: 10px;
+  z-index: 10;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.home-carousel-scope .slick-dots li button:before {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0.9;
+}
+
+.home-carousel-scope .slick-dots li.slick-active button:before {
+  color: #ffffff;
+  opacity: 1;
+}

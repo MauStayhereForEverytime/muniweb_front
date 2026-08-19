@@ -1,5 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { mediaUrl } from '../../services/newsService';
 
 const NewsItem = ({ news }) => {
   // Verificamos si existe el pk antes de crear el enlace
@@ -25,7 +25,7 @@ const NewsItem = ({ news }) => {
         <Link to={`/news/${pk}`} className="block">
           <div className="w-[292px] h-[175px] bg-[#83CEE1] rounded-xl">
             <img
-              src={news.fields.new_txt_urlimage}
+              src={mediaUrl(news.fields.new_txt_urlimage)}
               alt={news.fields.new_txt_tittle}
               className="w-full h-full object-cover rounded-xl"
             />

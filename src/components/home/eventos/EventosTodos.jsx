@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import AddEventImageModal from './AddEventImageModal';
 import EditEventImageModal from './EditEventImageModal';
-import { fetchEventImages, deleteEventImage } from '../../../services/eventService';
+import { fetchEventImages, deleteEventImage, mediaUrl } from '../../../services/eventService';
 
 const EventosTodos = () => {
   const [images, setImages] = useState([]);
@@ -118,7 +118,7 @@ const EventosTodos = () => {
               {image.ima_txt_urlgob ? (
                 <a href={image.ima_txt_urlgob} target="_blank" rel="noopener noreferrer">
                   <img
-                    src={`data:image/jpeg;base64,${image.ima_txt_urlpath}`}
+                    src={mediaUrl(image.ima_txt_urlpath)}
                     alt={image.ima_txt_name}
                     className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-110 cursor-pointer"
                   />
@@ -126,7 +126,7 @@ const EventosTodos = () => {
               ) : (
                 <Link to={`/eventos/edit/${image.ima_int_id}`} className="w-full h-full block">
                   <img
-                    src={`data:image/jpeg;base64,${image.ima_txt_urlpath}`}
+                    src={mediaUrl(image.ima_txt_urlpath)}
                     alt={image.ima_txt_name}
                     className="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-110 cursor-pointer"
                   />
