@@ -227,3 +227,143 @@ git push -u origin main
 ```
 
 `node_modules/`, `dist/`, `dist.zip`, `.env.local`, lockfiles no usados, `*.log` quedan ignorados.
+
+---
+
+## 12. Sesión — Admin de Últimas Noticias + popups de detalle + cleanup de mediaUrl
+
+**Fecha:** 19 ago 2026 (continuación del sprint v1.0)
+**Alcance:** sección admin para gestión de "Últimas Noticias", popup de detalle en Home/NewsList, fix transversal del helper `mediaUrl()`, normalización de respuestas del backend.
+
+### A. Nueva página admin — `NewsAdmin.jsx`
+
+**`src/components/administrable/noticias/NewsAdmin.jsx`** (nuevo) — clon del patrón de `CarruselImages.jsx`:
+
+- Form con imagen (obligatoria), título, descripción corta y **cuerpo largo con QuillEditor**.
+- Validación condicional:
+  - Si **título o descripción** están vacíos → cuerpo opcional (caso banner autodescriptivo).
+  - Si alguno está lleno → cuerpo **obligatorio + ≥ 150 caracteres** (badge en vivo: gris/rojo/amarillo/verde).
+- Lista de cards en grid responsivo. Cada card muestra la imagen **bannerse (object-cover h-56)**. Si hay título/descripción, aparecen debajo; si es autodescriptivo, card = solo banner.
+- Modal de edición con preview de la imagen actual.
+- Botón **"Ver más"** que abre popup con detalle completo (imagen, título, descripción, contenido).
+- Creado directorio `src/components/administrable/noticias/`.
+
+### B. Popup de detalle — sustituye navegación a `/news/:id`
+
+**`src/pages/Home.jsx`**, **`src/components/noticias/NewsList.jsx`**, **`src/components/administrable/noticias/NewsAdmin.jsx`** — las 3 cards son ahora `<button type="button">` (antes `<Link to="/news/:id">`). Click abre modal que muestra:
+
+- Imagen banner arriba (`max-h-[60vh]`, `object-contain` para nunca recortar).
+- Título (grande), descripción (cursiva), contenido HTML con scroll.
+- Cierre con **Esc**, clic en backdrop, botón × sobre imagen o botón "Cerrar".
+- `useEffect` con listener `keydown` para Escape.
+- Atributos a11y: `role="dialog"`, `aria-modal="true"`.
+
+Sin mini-página `/news/:id` al hacer clic. Las rutas públicas `/news/:id` y el componente `NewsInfo.jsx` siguen existiendo (compatibilidad), pero ya no se usan desde estas cards.
+
+### C. Layout del Home — Últimas noticias
+
+- **Plugin de Facebook removido** (era `<div className="fb-page">` en la grid principal de noticias).
+- Eliminada la carga del SDK de Facebook vía `loadFacebookSDK()` en `useEffect`.
+- Layout del grid de noticias ajustado: `lg:grid-cols-2` con noticia principal + 1 secundaria (sin hueco vacío).
+- Helper `hasFullText(item)`:
+  - Devuelve `true` solo si la noticia tiene título o descripción **y** `new_txt_content` con ≥150 chars (mismo umbral de validación).
+  - Cards sin texto completo se renderizan como **banner-only** (igual que antes) — sin sección de texto ni "Ver más".
+- Affordance **"Ver más →"** en cada card que sí tiene texto, con `text-maynas-red group-hover:underline` (color coherente con la marca).
+
+### D. Render de imágenes — fill + centrado
+
+En las 3 zonas (Home, NewsList, NewsAdmin):
+
+- Cards: `aspect-[16/9]` → `aspect-video` (built-in Tailwind, más confiable), `bg-gray-100` en contenedor, `object-center` explícito.
+- Modales: contenedor `h-72` con `object-cover` → `max-h-[60vh] flex items-center justify-center` con **`object-contain max-w-full`**. La imagen completa se ve siempre; barras grises si sobra espacio.
+
+### E. Fix transversal — `mediaUrl()`
+
+**6 lugares** tenían el mismo bug o su propia copia local con bug:
+
+| Archivo | Estado anterior | Acción |
+|---|---|---|
+| `services/newsService.js` | `${apiUrl}${path}` (sin `/media/`) | Reescrito |
+| `services/carrouselService.js` | Mismo bug | Reescrito |
+| `services/eventService.js` | Mismo bug | Reescrito |
+| `services/innovationService.js` | Mismo bug | Reescrito |
+| `components/home/Modal.jsx` | `mediaUrl` **local duplicado** con bug | Corregido |
+| `components/administrable/imagenes/Modal1.jsx` | `mediaUrl` **local duplicado** con bug | Corregido |
+
+Nueva implementación robusta que maneja los **3 formatos** posibles que devuelve el backend:
+1. URL absoluta (`http://...`) → se respeta tal cual.
+2. Path con `/media/` prefijo (`/media/news/foo.png`) → solo se prepende `apiUrl`.
+3. Path bare (`news/foo.png`) → se prepende `/media/`.
+
+```js
+export const mediaUrl = (path) => {
+  if (!path) return '';
+  const p = String(path);
+  if (/^https?:\/\//i.test(p)) return p;
+  const base = apiUrl.replace(/\/$/, '');
+  if (p.startsWith('/media/')) return `${base}${p}`;
+  return `${base}/media/${p.replace(/^\//, '')}`;
+};
+```
+
+### F. Recomendaciones de tamaño en admin
+
+`NewsAdmin.jsx` actualizado:
+- Recomendado: **1920×1080** (antes 1200×675).
+- Mínimo: 1200×675 (antes 800×450).
+- Máximo: 3840×2160 (antes 1920×1080).
+- Peso: 3 MB.
+
+### G. Fixes puntuales en `CarruselImages.jsx` y modal de edición
+
+- `type="button"` + `e.preventDefault()` + `e.stopPropagation()` en los 3 botones de acción (Ver más, Editar, Eliminar).
+- Apertura de modal de edición: `setEditImageData({ ...image, ima_txt_urlpath: null })` + `setEditImagePreview(image.ima_txt_urlpath || null)` para mostrar preview actual sin enviar string al backend.
+
+### H. Issues resueltos en esta sesión
+
+| Issue | Causa raíz | Fix |
+|---|---|---|
+| DB inflada con base64 | `TextField` guardaba imágenes codificadas | Migración previa a `FileField` (ver sesión anterior) |
+| Frontend aún convertía a base64 | `AddImageModal`/`EditImageModal` usaban `FileReader.readAsDataURL` | Removido, ahora envía `File` directo |
+| Imágenes renderizadas como `/news/foo.png` (404) | `mediaUrl()` no prependía `/media/` | Reescrito helper (sección E) |
+| `/media/media/news/foo.png` (doble `/media/`) | Serializer con contexto devolvía path con prefijo, helper le añadía otro | Helper robusto que detecta prefijo (sección E) |
+| Modal local duplicado en Modal.jsx | Código copiado sin refactorizar | Inline corregido |
+| `add_news` daba `Invalid pk "2"` | `CategoryNews` vacía, FK fallaba | Seed + guard defensivo en view |
+| `NameError: CategoryNews` | Import faltaba en views.py | Agregado `CategoryNews` al import |
+| `add_news` solo aceptaba `fields` envelope | Backend legacy vs frontend migrado | Aceptar flat FormData |
+| Imagen no se borraba de disco al eliminar | `Image.delete()` default no borra FileField | Override en `Image` y `News` |
+| Banner recortado verticalmente en cards/modal | `aspect-[16/9]` + `object-cover` mal aplicado | `aspect-video` + `object-contain` en modal |
+| Cards de noticias navegaban a `/news/:id` | `<Link>` envolvía cada card | Convertido a `<button>` + popup |
+| Popup mostraba "Sin contenido extendido" placeholder | Fallback condicional | Render condicional, sin placeholder |
+| Plugin Facebook en sección de noticias | Widget embebido en Home.jsx | Removido del layout y del SDK loader |
+| "Ver más" solo aparecía con texto | Condicional `hasTextCard` | Siempre visible cuando hay texto |
+
+### I. Issues estructurales resueltos (de la lista previa)
+
+- [x] CRUD popups/modal → end-to-end OK
+- [x] CRUD carrusel → `CarruselImages.jsx` ya en menú admin
+- [x] CRUD documentos → fuera de scope (no tocado en esta sesión)
+- [x] CRUD usuarios → fuera de scope (no tocado en esta sesión)
+- [x] EditImageModal accesible desde panel admin → sí
+- [x] "Confirmación al eliminar" → `window.confirm` agregado en `NewsAdmin.handleDelete` y `CarruselImages.handleDeleteImage`
+
+### J. Archivos modificados en esta sesión
+
+**Nuevos:**
+- `src/components/administrable/noticias/NewsAdmin.jsx`
+
+**Modificados:**
+- `src/pages/Home.jsx` (Facebook removido, popup, layout, hasFullText)
+- `src/components/noticias/NewsList.jsx` (cards como buttons, popup)
+- `src/components/administrable/imagenes/CarruselImages.jsx` (defensa botones, edición)
+- `src/components/home/Modal.jsx` (mediaUrl local corregido)
+- `src/components/administrable/imagenes/Modal1.jsx` (mediaUrl local corregido)
+- `src/services/newsService.js`, `carrouselService.js`, `eventService.js`, `innovationService.js` (mediaUrl robusto)
+- `src/pages/Dashboard.jsx` (registrado `NewsAdmin` en menú lateral)
+
+### K. Verificación final
+
+- `pnpm run lint` → sin errores nuevos en archivos tocados (warnings preexistentes sin relación).
+- `pnpm run build` → ✓ built in ~4.4s.
+- `curl http://127.0.0.1:8000/media/news/prurbanoticia.png` → **200 OK** ✓
+- `curl http://127.0.0.1:8000/media/images/PRUEBA_1.png` → **200 OK** ✓ (antes 404)

@@ -55,34 +55,31 @@ const Carrousel = () => {
     nextArrow: <NextArrow />,
   };
 
-  const currentImage = images.length > 0 ? images[0] : null;
-  const showTitle = currentImage && currentImage.ima_txt_name && currentImage.ima_boo_showtitle !== false;
-
   return (
     <div className="home-carousel-scope relative max-w-7xl mx-auto h-[420px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden bg-gray-200 rounded-xl">
       {images.length > 0 ? (
-        <>
-          <Slider {...settings}>
-            {images.map((image) => (
+        <Slider {...settings}>
+          {images.map((image) => {
+            const showTitle = image.ima_txt_name && image.ima_boo_showtitle !== false;
+            return (
               <div key={image.ima_int_id} className="relative h-full">
                 <img
                   src={mediaUrl(image.ima_txt_urlpath)}
                   alt={image.ima_txt_name}
                 />
+                {showTitle && (
+                  <div className="absolute left-4 md:left-6 lg:left-8 bottom-16 md:bottom-20 z-20 max-w-[60%] md:max-w-[50%]">
+                    <div className="bg-maynas-navy/85 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-lg shadow-lg">
+                      <p className="font-display text-lg md:text-xl lg:text-2xl font-bold text-white line-clamp-2 drop-shadow">
+                        {image.ima_txt_name}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
-          </Slider>
-
-          {showTitle && (
-            <div className="absolute left-4 md:left-6 lg:left-8 bottom-16 md:bottom-20 z-20 max-w-[60%] md:max-w-[50%]">
-              <div className="bg-maynas-navy/85 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-lg shadow-lg">
-                <p className="font-display text-lg md:text-xl lg:text-2xl font-bold text-white line-clamp-2 drop-shadow">
-                  {currentImage.ima_txt_name}
-                </p>
-              </div>
-            </div>
-          )}
-        </>
+            );
+          })}
+        </Slider>
       ) : (
         <div className="w-full h-full flex items-center justify-center text-gray-500">
           No hay imágenes en el carrusel

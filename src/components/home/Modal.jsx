@@ -6,7 +6,14 @@ const Modal = ({ isOpen, closeModal }) => {
   const [loading, setLoading] = useState(true);
   const [hasImages, setHasImages] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
-const mediaUrl = (path) => (path ? `${apiUrl.replace(/\/$/, '')}${path}` : '');
+const mediaUrl = (path) => {
+  if (!path) return '';
+  const p = String(path);
+  if (/^https?:\/\//i.test(p)) return p;
+  const base = apiUrl.replace(/\/$/, '');
+  if (p.startsWith('/media/')) return `${base}${p}`;
+  return `${base}/media/${p.replace(/^\//, '')}`;
+};
 
   useEffect(() => {
     if (isOpen) {

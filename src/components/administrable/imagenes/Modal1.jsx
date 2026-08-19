@@ -3,7 +3,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL;
-const mediaUrl = (path) => (path ? `${apiUrl.replace(/\/$/, '')}${path}` : '');
+const mediaUrl = (path) => {
+  if (!path) return '';
+  const p = String(path);
+  if (/^https?:\/\//i.test(p)) return p;
+  const base = apiUrl.replace(/\/$/, '');
+  if (p.startsWith('/media/')) return `${base}${p}`;
+  return `${base}/media/${p.replace(/^\//, '')}`;
+};
 
 const Modal1 = () => {
   const [images, setImages] = useState([]);

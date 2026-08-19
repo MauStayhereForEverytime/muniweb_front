@@ -4,12 +4,16 @@ import { addImage } from '../../../services/carrouselService';
 const AddImageModal = ({ closeModal, refreshImages }) => {
   const [imageData, setImageData] = useState({
     ima_txt_name: '',
-    ima_txt_urlpath: '',
+    ima_txt_urlpath: null,
     ima_txt_description: '',
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
+    if (type === 'file') {
+      setImageData({ ...imageData, [name]: files?.[0] || null });
+      return;
+    }
     setImageData({ ...imageData, [name]: value });
   };
 
@@ -48,22 +52,11 @@ const AddImageModal = ({ closeModal, refreshImages }) => {
           placeholder="URL de la Imagen"
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         /> */}
-        <input type="file" accept="image/*"onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (event) => {
-                const base64String = event.target.result.split(',')[1]; // Obtener solo el Base64
-                handleChange({
-                  target: {
-                    name: 'ima_txt_urlpath',
-                    value: base64String,
-                  },
-                });
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
+        <input
+          type="file"
+          name="ima_txt_urlpath"
+          accept="image/*"
+          onChange={handleChange}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 

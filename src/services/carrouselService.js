@@ -3,7 +3,14 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = apiUrl + 'carrousel-images';
 
 // Construye la URL absoluta hacia el backend para servir archivos de /media/
-export const mediaUrl = (path) => (path ? `${apiUrl.replace(/\/$/, '')}${path}` : '');
+export const mediaUrl = (path) => {
+  if (!path) return '';
+  const p = String(path);
+  if (/^https?:\/\//i.test(p)) return p;
+  const base = apiUrl.replace(/\/$/, '');
+  if (p.startsWith('/media/')) return `${base}${p}`;
+  return `${base}/media/${p.replace(/^\//, '')}`;
+};
 
 export const fetchImages = async () => {
   try {

@@ -7,58 +7,65 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
-## [Unreleased] — Sesión Slider + migración a /media/
+## [Unreleased] — Admin Últimas Noticias + popups de detalle + fix mediaUrl
 
 ### Added
-- Nueva sección **Carrusel** en el panel admin (`Dashboard > Imágenes > Carrusel`), con CRUD completo (agregar/editar/eliminar) y validación de dimensiones de imagen al subir.
-- Validación de tamaño/peso en el admin del carrusel (`CarruselImages.jsx`): lee `naturalWidth/Height` con `Image()` y muestra aviso visual verde/rojo.
-- **Checkbox "Mostrar título en el slider"** en admin carrusel (form agregar + modal editar), persistido en el backend como `Image.ima_boo_showtitle`.
-- `src/components/administrable/imagenes/CarruselImages.jsx` (componente nuevo, clona patrón de `Modal1.jsx`).
-- `src/components/home/carrousel/home-carousel.css` (CSS scope nuevo con overrides de `slick-carousel`).
-- Helper `mediaUrl(path)` exportado desde `carrouselService.js`, `newsService.js`, `innovationService.js`, `eventService.js` (construye URL absoluta al backend).
-- `doc/SESSION_SLIDER.md` con el resumen completo de los cambios de esta sesión.
+- **Nueva página admin "Últimas Noticias"** en el sidebar del Dashboard (`src/components/administrable/noticias/NewsAdmin.jsx`) — CRUD completo (agregar/editar/eliminar) con validación de dimensiones y peso, formulario con título + descripción + cuerpo largo (QuillEditor) + imagen obligatoria.
+- **Validación condicional de contenido**: si la noticia tiene título o descripción, el cuerpo (`new_txt_content`) es obligatorio con mínimo **150 caracteres** (badge en vivo: gris/rojo/amarillo/verde). Si no tiene texto, la card se renderiza como banner puro (autodescriptiva).
+- **Popup de detalle** en `Home.jsx`, `NewsList.jsx` y `NewsAdmin.jsx`: al hacer clic en una card, se abre modal con imagen banner + título + descripción + contenido HTML (scroll interno). Cierre con `Esc`, clic en backdrop, botón × sobre la imagen o botón "Cerrar".
+- **Affordance "Ver más →"** en las cards de noticias de Home (color `text-maynas-red`, hover underline).
+- Helper `hasFullText(item)` para distinguir cards con texto completo (título/desc + ≥150 chars de contenido) vs banner puro.
+- Nuevo directorio `src/components/administrable/noticias/`.
 
 ### Changed
-- **`Carrousel.jsx` (slider público del Home)**:
-  - Wrapper `max-w-7xl mx-auto h-[420px] sm:h-[480px] md:h-[560px] lg:h-[640px] rounded-xl` (antes full-bleed deformado).
-  - Eliminado CRUD inline (botones "Agregar/Editar/Eliminar" cuando había login). Solo lectura.
-  - Slider explícitamente horizontal: `vertical:false`, `verticalSwiping:false`, `rtl:false`, `fade:false`, `autoplay:true (5s)`.
-  - Flechas personalizadas `<PrevArrow />`/`<NextArrow />` con `FaChevronLeft/Right`.
-  - **Título fijo** en esquina inferior izquierda del slider (overlay fuera de los slides): `bg-maynas-navy/85 backdrop-blur-sm rounded-lg shadow-lg`, no cambia con la imagen activa.
-  - `src` ahora `mediaUrl(ima_txt_urlpath)` en vez de `data:image/jpeg;base64,...`.
-- **`Dashboard.jsx`**: submenú "Imágenes" ahora tiene **Carrusel** + Modal de Inicio. Removido `import Home` sin usar.
-- **`CarruselImages.jsx`**: formulario "Agregar Imagen" siempre visible (antes solo si `images.length === 0`).
-- Servicios (`carrouselService`, `newsService`, `innovationService`, `eventService`, `blogService`): ahora envían `FormData` con el `File` real, no JSON con base64. **Guarda `instanceof File`** para no enviar strings cuando no hay archivo nuevo.
-- **Componentes admin + público**: `CarruselImages.jsx`, `Modal1.jsx`, `Eventos.jsx`, `EventosInfo.jsx`, `EventosTodos.jsx`, `Modal.jsx`, `Home.jsx`, `NewsList.jsx`, `NewsInfo.jsx`, `NewsItem.jsx`, `Innovation.jsx`, `InnovationList.jsx`, `InnovationInfo.jsx`, `Blog.jsx`, `BlogList.jsx`, `BlogInfo.jsx`, `AddEventImageModal.jsx`, `EditEventImageModal.jsx`: ahora usan `mediaUrl()` para `src` y `File` para upload. Previews con `URL.createObjectURL`.
-- Payloads: ya no se envía `fields: {...}` anidado para carrusel/modal/eventos; se envía objeto plano.
+- **`Home.jsx`**:
+  - Cards de noticias convertidas de `<Link to="/news/:id">` a `<button type="button">` que abren popup. **No más navegación a mini-páginas**.
+  - Plugin de **Facebook removido** de la sección de noticias (incluyendo `loadFacebookSDK()` del `useEffect`).
+  - Layout del grid de noticias ajustado a `lg:grid-cols-2` con noticia principal + 1 secundaria (sin hueco vacío dejado por el Facebook plugin).
+  - Cards usan `aspect-video` (built-in Tailwind) en vez de `aspect-[16/9]` + `bg-gray-100` + `object-center` explícito.
+- **`NewsList.jsx`** (página pública de noticias): cards convertidas de `<Link>` a `<button>`, modal popup añadido con el mismo patrón que Home.
+- **`NewsAdmin.jsx`**: modal popup con el mismo patrón. Variable muerta `newsItems` removida (lint).
+- **`mediaUrl()` reescrito y robustecido** en 6 lugares:
+  - 4 servicios: `newsService.js`, `carrouselService.js`, `eventService.js`, `innovationService.js`.
+  - 2 copias locales duplicadas: `Modal.jsx`, `Modal1.jsx`.
+  - Nueva implementación maneja los 3 formatos que puede devolver el backend (URL absoluta, path con `/media/`, path bare).
+- **Modales (Home/NewsList/NewsAdmin)**: contenedor de imagen cambia de `h-72 object-cover` a `max-h-[60vh] flex items-center justify-center object-contain max-w-full`. La imagen completa se ve siempre; barras grises si sobra espacio.
+- **Recomendaciones de tamaño en `NewsAdmin`**:
+  - Recomendado: **1920×1080 px** (antes 1200×675).
+  - Mínimo: 1200×675 (antes 800×450).
+  - Máximo: 3840×2160 (antes 1920×1080).
+  - Peso: 3 MB.
+- **`CarruselImages.jsx`**: `type="button"` + `e.preventDefault()` + `e.stopPropagation()` en los 3 botones de acción (Ver más, Editar, Eliminar) para evitar submits accidentales.
 
 ### Fixed
-- **Slider deformado en pantalla completa**: el slider full-bleed estiraba la imagen. Ahora con `max-w-7xl` y `rounded-xl` mantiene proporción y se ve coherente con el resto del sitio.
-- **Stack vertical de slides**: la cadena de alturas del slider colapsaba (sin `height: 100%` forzado en `.slick-list/track/slide`), produciendo que las imágenes se apilaran verticalmente. CSS scope nuevo lo corrige.
-- **Caption cortado/pegado al borde**: el caption se veía mal en pantalla completa. Ahora título es overlay fijo a la izquierda con `backdrop-blur` + `bg-maynas-navy/85`.
-- **Título saliéndose del marco**: el caption estaba dentro de cada `<div>` de slide sin altura → se posicionaba al fondo del viewport. Resuelto extrayéndolo del slide y poniéndolo como overlay sobre el contenedor del slider.
-- **Estilo boletin filtrado al Home**: `boletin.css` global aplicaba `border-radius:20px; border:4px solid #fff; box-shadow` a `.slick-slide img`. CSS scope `.home-carousel-scope` sobreescribe con `!important`.
-- **`The submitted data was not a file`** en edición de imágenes: `editImageData.ima_txt_urlpath` mantenía URL string de la imagen existente al abrir modal de edición, se enviaba al backend `FileField` que lo rechazaba. Fix: `setEditImage({ ...image, ima_txt_urlpath: null })` al abrir modal + guarda `instanceof File` en todos los servicios.
+- **Imágenes devolvían 404 en frontend** (`http://127.0.0.1:8000/news/foo.png`): el helper `mediaUrl()` no prependía `/media/`. Reescrito para incluirlo consistentemente.
+- **`/media/media/...` (doble `/media/`)**: el serializer devolvía path con prefijo `/media/` cuando no había contexto de request, y el helper añadía otro prefijo. Helper robusto que detecta el formato.
+- **`Modal.jsx` y `Modal1.jsx`**: copias locales del helper `mediaUrl` con el mismo bug que los servicios (resueltas al reescribir todos los 6 lugares).
+- **Cards de noticias navegaban a `/news/:id`**: convertidas a `<button>` que abre popup, eliminando la mini-página que aparecía al hacer clic.
+- **Banner recortado verticalmente en cards/modal**: `aspect-video` + `object-cover object-center` en cards, `object-contain` en modal — la imagen completa o recortada centrada, no por un lado.
+- **Popup mostraba "Sin contenido extendido" placeholder**: eliminado; el `<div>` de contenido se renderiza solo si existe.
+- **Plugin de Facebook visible en sección de noticias**: removido del Home.jsx (incluyendo SDK loader).
+- **`NewsAdmin.handleDelete` y `CarruselImages.handleDeleteImage`**: agregada confirmación `window.confirm` antes de eliminar.
+- **`NewsAdmin.openEdit`**: `setEditImageData({ ...image, ima_txt_urlpath: null })` + `setEditImagePreview(image.ima_txt_urlimage || null)` para mostrar preview actual sin enviar string al backend `FileField`.
 
 ### Removed
-- Botones de edición/CRUD del slider público del Home (movidos al panel admin).
-
-### Deprecated
-- Envío de imágenes como base64 en payloads JSON. Ahora siempre `multipart/form-data` con `File`.
-
-### Security
-- Imágenes ya no se almacenan como `TextField` con base64 en la DB, ahora son archivos en `MEDIA_ROOT` (`/media/{images,news,innovation}/`). Imposible inyectar HTML/scripts vía base64.
+- Plugin de Facebook del layout del Home (incluyendo `loadFacebookSDK()` del `useEffect`).
+- Placeholder "Sin contenido extendido" de los 3 modales (Home, NewsList, NewsAdmin).
+- Variable muerta `newsItems` en `NewsList.jsx`.
+- Atributo `use_url=True` por defecto en `NewsSerializer.new_txt_urlimage` (verificado: ahora `use_url=False`).
 
 ### Notes
-- Recomendación de tamaño para imágenes del slider: **1920×720 px** (ratio 2.67:1), mínimo 1600×600, máximo 2560×1080, peso máx 3 MB.
-- Campo nuevo `Image.ima_boo_showtitle` (default `True`): controla si el título se muestra en el slider público. Si `False`, el caption no se renderiza.
-- Imágenes detectadas en `media/images/` actualmente:
-  - `serey-kim-xjrvTc52xYc-unsplash.jpg` → **7708×3036 px, 2.8 MB** ← excede dimensiones, redimensionar.
-  - `ChatGPT_Image_18_ago_2026_13_50_40.png` → **1717×916 px, 2.3 MB** ← OK.
+- El comportamiento esperado del admin: si el usuario rellena título o descripción, debe escribir ≥150 caracteres de cuerpo (validado en frontend + bloqueante al guardar).
+- Banner / imagen autodescriptiva: solo imagen, sin texto. La card se renderiza como banner puro y el clic abre popup mostrando la imagen más grande.
+- Las rutas públicas `/news/:id` y el componente `NewsInfo.jsx` siguen existiendo (compatibilidad), pero ya no se usan desde las cards públicas.
+- `pnpm run lint` sin errores nuevos en archivos tocados.
+- `pnpm run build` ✓ built in ~4.4s.
+- `curl http://127.0.0.1:8000/media/news/prurbanoticia.png` → 200 OK.
+- `curl http://127.0.0.1:8000/media/images/PRUEBA_1.png` → 200 OK (antes 404).
 
 ---
 
-## [Unreleased] — Sesión de migración del VPS
+## [Unreleased] — Sesión Slider + migración a /media/
 
 ### Added
 - Migración del repositorio privado del VPS (`/home/munimaynas/muniweb.munimaynas.gob.pe/muniweb2025/`) al entorno local vía `git archive HEAD`.
