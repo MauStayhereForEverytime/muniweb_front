@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiClient from '../api/api';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = apiUrl + 'event-images';
@@ -32,7 +33,7 @@ const buildFormData = (imageData) => {
 
 export const addEventImage = async (imageData) => {
   try {
-    const response = await axios.post(`${API_URL}/add`, buildFormData(imageData));
+    const response = await apiClient.post(`${API_URL}/add`, buildFormData(imageData), { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error adding event image:', error);
@@ -42,7 +43,7 @@ export const addEventImage = async (imageData) => {
 
 export const editEventImage = async (id, updatedData) => {
   try {
-    const response = await axios.put(`${API_URL}/edit/${id}`, buildFormData(updatedData));
+    const response = await apiClient.put(`${API_URL}/edit/${id}`, buildFormData(updatedData), { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error editing event image:', error);
@@ -52,7 +53,7 @@ export const editEventImage = async (id, updatedData) => {
 
 export const deleteEventImage = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete/${id}`);
+    const response = await apiClient.delete(`${API_URL}/delete/${id}`, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error deleting event image:', error);

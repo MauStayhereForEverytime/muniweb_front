@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import * as FaIcons from "react-icons/fa";
 import { Navigate } from "react-router-dom";
+import { logout } from '../api/api';
 import 'react-pro-sidebar/dist/css/styles.css';
-import CompromisoForm from '../components/administrable/compromisos/CompromisoForm';
 // import ActasForm from '../components/administrable/documents/Actasform';
 import Dashboard1 from '../components/administrable/dashboard/Dashboard1';
 import Modal1 from '../components/administrable/imagenes/Modal1';
 import CarruselImages from '../components/administrable/imagenes/CarruselImages';
 import NewsAdmin from '../components/administrable/noticias/NewsAdmin';
-import Testimonios1 from '../components/administrable/testimonios/Testimonios1';
 import Usuarios from '../components/administrable/usuarios/Usuarios';
 
 // Obtener ícono basado en nombre
@@ -42,12 +41,6 @@ const Dashboard = () => {
       items: null,
     },
     {
-      label: 'Compromisos',
-      icon: 'FaCopyright',
-      content: <CompromisoForm />, // Su contenido correspondiente
-      items: null,
-    },
-    {
       label: 'Imágenes',
       icon: 'FaImages',
       items: [
@@ -72,12 +65,6 @@ const Dashboard = () => {
       items: null,
     },
     {
-      label: 'Testimonios',
-      icon: 'FaFileAlt',
-      content: <Testimonios1 />, // Su contenido correspondiente
-      items: null,
-    },
-    {
       label: 'Usuarios',
       icon: 'FaUser',
       content: <Usuarios />, // Su contenido correspondiente
@@ -87,11 +74,7 @@ const Dashboard = () => {
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('id');
-    window.location.href = '/login'; // Redirige al login después de eliminar el token
+    logout(); // Limpia localStorage + token en memoria y redirige a /login
   };
 
   const handleToggleSidebar = () => {
@@ -110,14 +93,14 @@ const Dashboard = () => {
 
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar usando react-pro-sidebar */}
-      {/* Sidebar usando react-pro-sidebar */}
+      {/* Sidebar fijo: h-full dentro de un contenedor h-screen; el scroll ocurre solo en el contenido */}
       <ProSidebar
         breakPoint="md"
         collapsed={isCollapsed}
         width={isCollapsed ? '80px' : '250px'}
-        style={{ zIndex: '49', height: '100vh' }}
+        style={{ zIndex: '49', height: '100%' }}
       >
         <Menu iconShape="circle">
           {/* Mapeo del menú */}
@@ -164,11 +147,19 @@ const Dashboard = () => {
               )}
             </React.Fragment>
           ))}
+
+          {/* Cerrar sesión al final del sidebar, en rojo */}
+          <MenuItem
+            icon={<FaIcons.FaSignOutAlt style={{ color: '#ef4444' }} />}
+            onClick={handleLogout}
+          >
+            <span style={{ color: '#ef4444', fontWeight: 600 }}>Cerrar Sesión</span>
+          </MenuItem>
         </Menu>
       </ProSidebar> 
 
       {/* Contenido principal */}
-      <div className="flex-grow flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header style={{ backgroundColor: '#1B3C6C' }} className="bg-blue-600 text-white p-4 flex justify-between items-center">
           <button
@@ -218,9 +209,9 @@ const Dashboard = () => {
           </div>
         </header>
        
-        <div className="items-center justify-between w-full h-full bg-white-100">
-  {activeContent}
-</div>
+        <div className="flex-1 w-full overflow-y-auto bg-gray-50">
+          {activeContent}
+        </div>
 
 
 

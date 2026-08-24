@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiClient from '../api/api';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -38,7 +39,7 @@ const buildFormData = (payload) => {
 export const createBlog = async (newBlog) => {
   try {
     const fd = buildFormData(newBlog);
-    const response = await axios.post(apiUrl + 'blogs/add', fd);
+    const response = await apiClient.post('blogs/add', fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error creating blog:', error);
@@ -48,7 +49,7 @@ export const createBlog = async (newBlog) => {
 
 export const deleteBlog = async (id) => {
   try {
-    const response = await axios.delete(apiUrl + `blogs/${id}/delete/`);
+    const response = await apiClient.delete(`blogs/${id}/delete/`, { requiresAuth: true });
     return response.status === 204;
   } catch (error) {
     console.error('Error deleting blog:', error);
@@ -59,7 +60,7 @@ export const deleteBlog = async (id) => {
 export const updateBlog = async (id, updatedBlog) => {
   try {
     const fd = buildFormData(updatedBlog);
-    const response = await axios.put(apiUrl + `blogs/${id}/edit/`, fd);
+    const response = await apiClient.put(`blogs/${id}/edit/`, fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error updating blog:', error);

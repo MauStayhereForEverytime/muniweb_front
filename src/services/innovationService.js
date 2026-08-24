@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiClient from '../api/api';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -44,7 +45,7 @@ const buildFormData = (payload) => {
 export const createInnovation = async (newInnovation) => {
   try {
     const fd = buildFormData(newInnovation);
-    const response = await axios.post(apiUrl + 'innovations/add', fd);
+    const response = await apiClient.post('innovations/add', fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error creating innovation:', error);
@@ -54,7 +55,7 @@ export const createInnovation = async (newInnovation) => {
 
 export const deleteInnovation = async (id) => {
   try {
-    const response = await axios.delete(apiUrl + `innovations/${id}/delete/`);
+    const response = await apiClient.delete(`innovations/${id}/delete/`, { requiresAuth: true });
     return response.status === 204;
   } catch (error) {
     console.error('Error deleting innovation:', error);
@@ -65,7 +66,7 @@ export const deleteInnovation = async (id) => {
 export const updateInnovation = async (id, updatedInnovation) => {
   try {
     const fd = buildFormData(updatedInnovation);
-    const response = await axios.put(apiUrl + `innovations/${id}/edit/`, fd);
+    const response = await apiClient.put(`innovations/${id}/edit/`, fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error updating innovation:', error);

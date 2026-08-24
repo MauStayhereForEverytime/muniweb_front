@@ -19,8 +19,6 @@ const Eventos = () => {
       <SectionHeader
         eyebrow="Agenda"
         title="Eventos"
-        linkTo="/eventos-todos"
-        linkLabel="Ver todos"
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

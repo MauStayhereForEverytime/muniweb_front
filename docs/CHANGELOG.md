@@ -7,6 +7,27 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] — Auditoría de seguridad (hallazgos frontend)
+
+### Added
+- **Reorganización documental**: sesiones movidas de `doc/` a `docs/sessions/` (convención estándar del proyecto).
+- **`AGENTS.md`** en la raíz con instrucciones para agentes IA.
+- Auditoría de seguridad de ambos repos documentada en `muniweb_back/docs/sessions/SESSION_SEGURIDAD.md` (referencia cruzada).
+
+### Security
+Hallazgos del frontend (pendientes de remediación):
+- **ALTO**: 91 vulnerabilidades npm (1 crítica: swiper prototype pollution; 42 altas: axios <1.16 con ~11 advisories, form-data CRLF, lodash, minimatch...). Remediar con `pnpm update axios swiper && pnpm audit fix`.
+- **ALTO**: tokens JWT en localStorage (`Login.jsx`) — robables vía XSS.
+- **CRÍTICO combinado**: 7 usos de `dangerouslySetInnerHTML` con HTML sin sanitizar (`NewsInfo`, `Home`, `BlogInfo`, `NewsList`, `EventosInfo`, `InnovationInfo`, `NewsAdmin`) + backend sin auth en escrituras = XSS almacenado explotable por anónimos.
+- Los servicios (`src/services/*.js`) llaman a axios crudo sin header `Authorization` — el flujo JWT existente en `api/api.js` es código muerto.
+- `Geovisor.jsx`, `Forociudadano.jsx`, `Vistauno.jsx` guardan `'dummy-token'` en localStorage.
+- `logout()` en `api.js` redirige a URL relativa rota (`muniweb/login`).
+
+### Notes
+- Decisión de negocio: fase 1 = migrar las llamadas de escritura a `apiClient` con `requiresAuth: true` (renovación automática de token en 401). Archivos afectados listados en SESSION_SEGURIDAD.md §3.3.
+
+---
+
 ## [Unreleased] — Admin Últimas Noticias + popups de detalle + fix mediaUrl
 
 ### Added

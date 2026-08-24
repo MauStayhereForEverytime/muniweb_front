@@ -118,7 +118,7 @@ When this skill is active, the user expects you to:
 - Run Django commands using the local venv directly (no need to specify full path each time)
 - Run frontend commands via `pnpm` from the frontend root
 - Coordinate changes: if a backend field changes, update the frontend service/component in the same session
-- Reference `doc/SESSION_SLIDER.md` and CHANGELOG.md in both repos for historical context
+- Reference `docs/sessions/SESSION_SLIDER.md` (front) / `docs/sessions/` (back) and CHANGELOG.md in both repos for historical context
 
 ## Quick verification commands
 

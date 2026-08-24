@@ -1,4 +1,6 @@
 // src/services/carrouselService.js
+import apiClient from '../api/api';
+
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = apiUrl + 'carrousel-images';
 
@@ -14,9 +16,8 @@ export const mediaUrl = (path) => {
 
 export const fetchImages = async () => {
   try {
-    const response = await fetch(API_URL);
-    const data = await response.json();
-    return Array.isArray(data) ? data : [];
+    const response = await apiClient.get(API_URL);
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error('Error fetching images:', error);
     return [];
@@ -38,11 +39,8 @@ const buildFormData = (imageData) => {
 
 export const addImage = async (imageData) => {
   try {
-    const response = await fetch(`${API_URL}/add`, {
-      method: 'POST',
-      body: buildFormData(imageData),
-    });
-    return await response.json();
+    const response = await apiClient.post(`${API_URL}/add`, buildFormData(imageData), { requiresAuth: true });
+    return response.data;
   } catch (error) {
     console.error('Error adding image:', error);
   }
@@ -50,11 +48,8 @@ export const addImage = async (imageData) => {
 
 export const editImage = async (id, imageData) => {
   try {
-    const response = await fetch(`${API_URL}/edit/${id}`, {
-      method: 'PUT',
-      body: buildFormData(imageData),
-    });
-    return await response.json();
+    const response = await apiClient.put(`${API_URL}/edit/${id}`, buildFormData(imageData), { requiresAuth: true });
+    return response.data;
   } catch (error) {
     console.error('Error updating image:', error);
   }
@@ -62,10 +57,8 @@ export const editImage = async (id, imageData) => {
 
 export const deleteImage = async (id) => {
   try {
-    const response = await fetch(`${API_URL}/delete/${id}`, {
-      method: 'DELETE',
-    });
-    return await response.json();
+    const response = await apiClient.delete(`${API_URL}/delete/${id}`, { requiresAuth: true });
+    return response.data;
   } catch (error) {
     console.error('Error deleting image:', error);
   }

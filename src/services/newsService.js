@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiClient from '../api/api';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -47,7 +48,7 @@ const buildFormData = (payload) => {
 export const createNews = async (newNews) => {
   try {
     const fd = buildFormData(newNews);
-    const response = await axios.post(apiUrl + 'news/add', fd);
+    const response = await apiClient.post('news/add', fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error creating news:', error);
@@ -57,7 +58,7 @@ export const createNews = async (newNews) => {
 
 export const deleteNews = async (id) => {
   try {
-    const response = await axios.delete(apiUrl + `news/${id}/delete/`);
+    const response = await apiClient.delete(`news/${id}/delete/`, { requiresAuth: true });
     return response.status === 204;
   } catch (error) {
     console.error('Error deleting news:', error);
@@ -68,7 +69,7 @@ export const deleteNews = async (id) => {
 export const updateNews = async (id, updatedNews) => {
   try {
     const fd = buildFormData(updatedNews);
-    const response = await axios.put(apiUrl + `news/${id}/edit/`, fd);
+    const response = await apiClient.put(`news/${id}/edit/`, fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error updating news:', error);

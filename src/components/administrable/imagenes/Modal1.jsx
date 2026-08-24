@@ -1,6 +1,6 @@
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../../api/api';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const mediaUrl = (path) => {
@@ -21,7 +21,7 @@ const Modal1 = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    axios.get(apiUrl + 'modal-images')
+    apiClient.get('modal-images')
       .then((response) => setImages(response.data))
       .catch((error) => console.error('Error al obtener las imágenes:', error));
   }, []);
@@ -51,7 +51,7 @@ const Modal1 = () => {
   };
 
   const handleAddImage = () => {
-    axios.post(apiUrl + 'modal-images/add', buildFormData(newImage))
+    apiClient.post('modal-images/add', buildFormData(newImage), { requiresAuth: true })
       .then((response) => {
         setImages([...images, response.data]);
         setNewImage({ ima_txt_name: '', ima_txt_description: '', ima_txt_urlpath: null });
@@ -62,7 +62,7 @@ const Modal1 = () => {
 
   const handleEditImage = () => {
     if (editImage) {
-      axios.put(`${apiUrl}modal-images/edit/${editImage.ima_int_id}`, buildFormData(editImage))
+      apiClient.put(`modal-images/edit/${editImage.ima_int_id}`, buildFormData(editImage), { requiresAuth: true })
         .then((response) => {
           setImages(images.map((image) =>
             image.ima_int_id === editImage.ima_int_id ? response.data : image
@@ -76,7 +76,7 @@ const Modal1 = () => {
   };
 
   const handleDeleteImage = (id) => {
-    axios.delete(`${apiUrl}modal-images/delete/${id}`)
+    apiClient.delete(`modal-images/delete/${id}`, { requiresAuth: true })
       .then(() => setImages(images.filter((image) => image.ima_int_id !== id)))
       .catch((error) => console.error('Error al eliminar la imagen:', error));
   };
