@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { fetchEventImages, mediaUrl } from '../../../services/eventService';
+import { fetchEventImages, fetchEventVisibility, mediaUrl } from '../../../services/eventService';
 import { Link } from 'react-router-dom';
 import SectionHeader from '../SectionHeader';
+import conferencia from '../../../assets/img/conferencia.jpg';
+
+const NEWS_URL = 'https://www.gob.pe/institucion/munimaynas/noticias';
 
 const Eventos = () => {
   const [images, setImages] = useState([]);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const getImages = async () => {
@@ -12,6 +16,7 @@ const Eventos = () => {
       setImages(data);
     };
     getImages();
+    fetchEventVisibility().then(setVisible);
   }, []);
 
   return (
@@ -21,49 +26,74 @@ const Eventos = () => {
         title="Eventos"
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {images.length === 0 ? (
-          <div className="col-span-2 w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500 rounded-xl">
-            No hay eventos disponibles
+      <a
+        href={NEWS_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group relative block h-48 sm:h-64 bg-maynas-neutral overflow-hidden rounded-xl ring-1 ring-gray-200 shadow-md mb-6"
+      >
+        <img
+          src={conferencia}
+          alt="Noticias de la Municipalidad de Maynas"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-maynas-navy/90 via-maynas-navy/40 to-transparent flex items-end px-5 pb-5">
+          <div>
+            <p className="font-display text-lg md:text-xl font-bold text-white">
+              Eventos de la Municipalidad de Maynas
+            </p>
+            <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-maynas-red group-hover:underline">
+              Ver Eventos →
+            </span>
           </div>
-        ) : images.slice(0, 2).map((image) => {
-          const imageSrc = mediaUrl(image.ima_txt_urlpath);
-          const altText = image.ima_txt_name;
+        </div>
+      </a>
 
-          const card = (
-            <div className="group relative h-64 sm:h-80 bg-maynas-neutral overflow-hidden rounded-xl ring-1 ring-gray-200 shadow-md">
-              <img
-                src={imageSrc}
-                alt={altText}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-maynas-navy/90 via-maynas-navy/40 to-transparent px-5 pb-5 pt-16">
-                <p className="font-display text-lg font-bold text-white line-clamp-2">
-                  {altText}
-                </p>
+      {visible && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {images.length === 0 ? (
+            <div className="col-span-2 w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500 rounded-xl">
+              No hay eventos disponibles
+            </div>
+          ) : images.slice(0, 2).map((image) => {
+            const imageSrc = mediaUrl(image.ima_txt_urlpath);
+            const altText = image.ima_txt_name;
+
+            const card = (
+              <div className="group relative h-64 sm:h-80 bg-maynas-neutral overflow-hidden rounded-xl ring-1 ring-gray-200 shadow-md">
+                <img
+                  src={imageSrc}
+                  alt={altText}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-maynas-navy/90 via-maynas-navy/40 to-transparent px-5 pb-5 pt-16">
+                  <p className="font-display text-lg font-bold text-white line-clamp-2">
+                    {altText}
+                  </p>
+                </div>
               </div>
-            </div>
-          );
+            );
 
-          return (
-            <div key={image.ima_int_id}>
-              {image.ima_txt_urlgob ? (
-                <a
-                  href={image.ima_txt_urlgob}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {card}
-                </a>
-              ) : (
-                <Link to={`/eventos/edit/${image.ima_int_id}`}>
-                  {card}
-                </Link>
-              )}
-            </div>
-          );
-        })}
-      </div>
+            return (
+              <div key={image.ima_int_id}>
+                {image.ima_txt_urlgob ? (
+                  <a
+                    href={image.ima_txt_urlgob}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {card}
+                  </a>
+                ) : (
+                  <Link to={`/eventos/edit/${image.ima_int_id}`}>
+                    {card}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

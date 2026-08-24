@@ -7,6 +7,27 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] — Banner de noticias en Eventos + Admin de Eventos con toggle de visibilidad
+
+### Added
+- **Banner de noticias** en la sección de Eventos (`src/components/home/eventos/Eventos.jsx`): enlace full-width con imagen a `https://www.gob.pe/institucion/munimaynas/noticias` (abre en nueva pestaña).
+- **Nueva página admin "Eventos"** (`src/components/administrable/eventos/EventosAdmin.jsx`) registrada en el sidebar del Dashboard: CRUD de eventos (agregar/editar/eliminar) + **checkbox de visibilidad** que habilita/deshabilita la sección de eventos en la Home.
+- **Servicio de visibilidad** en `eventService.js`: `fetchEventVisibility()` (GET) y `updateEventVisibility(visible)` (PUT con `requiresAuth: true`).
+- Resumen de sesión: `docs/sessions/SESSION_EVENTOS_NOTICIAS.md`.
+
+### Changed
+- **`Eventos.jsx`**: la grilla de eventos (tarjetas + placeholder "No hay eventos disponibles") se envuelve en `{visible && ...}`. Con visibilidad desactivada solo se muestra el banner de noticias; con visibilidad activada se muestran las tarjetas o el placeholder si no hay eventos.
+
+### Fixed
+- **`ima_txt_urlgob` no se guardaba**: `buildFormData` en `eventService.js` nunca agregaba el campo al `FormData`, por lo que los eventos perdían su URL de Gob al crear/editar. Ahora se envía correctamente.
+
+### Notes
+- El toggle de visibilidad se persiste en el backend (campo `cai_boo_visible` de `CategoryImage`, categoría de eventos `cai_int_id=2`), no en localStorage, porque afecta a la landing pública.
+- `pnpm run build` ✓; `pnpm run lint` sin errores nuevos en los archivos tocados. Errores de lint restantes son preexistentes.
+- Referencia cruzada: migración y endpoints en el CHANGELOG de `muniweb_back`.
+
+---
+
 ## [Unreleased] — Auditoría de seguridad (hallazgos frontend)
 
 ### Added

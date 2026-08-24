@@ -9,6 +9,7 @@ import Dashboard1 from '../components/administrable/dashboard/Dashboard1';
 import Modal1 from '../components/administrable/imagenes/Modal1';
 import CarruselImages from '../components/administrable/imagenes/CarruselImages';
 import NewsAdmin from '../components/administrable/noticias/NewsAdmin';
+import EventosAdmin from '../components/administrable/eventos/EventosAdmin';
 import Usuarios from '../components/administrable/usuarios/Usuarios';
 
 // Obtener ícono basado en nombre
@@ -62,6 +63,12 @@ const Dashboard = () => {
       label: 'Últimas Noticias',
       icon: 'FaNewspaper',
       content: <NewsAdmin />,
+      items: null,
+    },
+    {
+      label: 'Eventos',
+      icon: 'FaCalendarAlt',
+      content: <EventosAdmin />,
       items: null,
     },
     {

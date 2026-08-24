@@ -23,10 +23,35 @@ export const fetchEventImages = async () => {
   }
 };
 
+export const fetchEventVisibility = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}event-visibility`);
+    return response.data?.visible !== false;
+  } catch (error) {
+    console.error('Error fetching event visibility:', error);
+    return true;
+  }
+};
+
+export const updateEventVisibility = async (visible) => {
+  try {
+    const response = await apiClient.put(
+      `${apiUrl}event-visibility/update`,
+      { visible },
+      { requiresAuth: true }
+    );
+    return response.data?.visible ?? visible;
+  } catch (error) {
+    console.error('Error updating event visibility:', error);
+    throw error;
+  }
+};
+
 const buildFormData = (imageData) => {
   const fd = new FormData();
   if (imageData.ima_txt_name !== undefined) fd.append('ima_txt_name', imageData.ima_txt_name || '');
   if (imageData.ima_txt_description !== undefined) fd.append('ima_txt_description', imageData.ima_txt_description || '');
+  if (imageData.ima_txt_urlgob !== undefined) fd.append('ima_txt_urlgob', imageData.ima_txt_urlgob || '');
   if (imageData.ima_txt_urlpath instanceof File) fd.append('ima_txt_urlpath', imageData.ima_txt_urlpath);
   return fd;
 };
