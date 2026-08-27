@@ -5,7 +5,8 @@
 .home-carousel-scope .slick-slider,
 .home-carousel-scope .slick-list,
 .home-carousel-scope .slick-track,
-.home-carousel-scope .slick-slide {
+.home-carousel-scope .slick-slide,
+.home-carousel-scope .slick-slide > div {
   height: 100%;
 }
 
@@ -43,5 +44,14 @@
 
 .home-carousel-scope .slick-dots li.slick-active button:before {
   color: #ffffff;
+  opacity: 1;
+}
+
+.integridad-carousel-scope .slick-dots li button:before {
+  color: rgba(120, 7, 7, 0.55);
+}
+
+.integridad-carousel-scope .slick-dots li.slick-active button:before {
+  color: #780707;
   opacity: 1;
 }

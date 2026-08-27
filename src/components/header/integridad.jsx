@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 import Header from "../Header";
 import Footer from "../Footer";
@@ -212,6 +212,30 @@ const categorias = ["Nacional", "Institucional"];
 
 const sliderImages = [maynas2, plaza, grafico, image];
 
+// eslint-disable-next-line react/prop-types
+const PrevArrow = ({ onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label="Anterior"
+    className={`absolute left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-maynas-red transition-colors duration-200 ${focusRing}`}
+  >
+    <FaChevronLeft />
+  </button>
+);
+
+// eslint-disable-next-line react/prop-types
+const NextArrow = ({ onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label="Siguiente"
+    className={`absolute right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-maynas-red transition-colors duration-200 ${focusRing}`}
+  >
+    <FaChevronRight />
+  </button>
+);
+
 const settings = {
   dots: true,
   infinite: true,
@@ -220,7 +244,9 @@ const settings = {
   slidesToScroll: 1,
   autoplay: true,
   autoplaySpeed: 4000,
-  arrows: false,
+  arrows: true,
+  prevArrow: <PrevArrow />,
+  nextArrow: <NextArrow />,
 };
 
 const noticias = [
@@ -364,15 +390,16 @@ export default function IntegridadInstitucional() {
       <main id="integridad" className="flex-grow pt-20 md:pt-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <section className="pb-12 md:pb-16">
-            <div className="home-carousel-scope relative h-[420px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden bg-gray-200 rounded-xl">
+            <div className="home-carousel-scope integridad-carousel-scope relative h-[420px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden bg-gray-200 rounded-xl">
               <Slider {...settings}>
                 {sliderImages.map((img, i) => (
-                  <div key={i} className="relative h-full">
+                  <div key={i} className="relative h-full w-full">
                     <img
                       src={img}
                       alt={`Integridad Institucional ${i + 1}`}
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute left-4 md:left-6 lg:left-8 bottom-16 md:bottom-20 z-20 max-w-[60%] md:max-w-[50%]">
+                    <div className="pointer-events-none absolute left-4 md:left-6 lg:left-8 bottom-16 md:bottom-20 z-20 max-w-[60%] md:max-w-[50%]">
                       <div className="bg-maynas-navy/85 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-lg shadow-lg">
                         <p className="font-display text-lg md:text-xl lg:text-2xl font-bold text-white line-clamp-2 drop-shadow">
                           Integridad Institucional
@@ -485,14 +512,14 @@ export default function IntegridadInstitucional() {
                   onClick={() => openModal(noticias[0])}
                   className={`group flex flex-col h-full w-full text-left bg-white rounded-xl overflow-hidden ring-1 ring-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 ${focusRing}`}
                 >
-                  <div className="h-64 md:h-80 bg-gray-100 overflow-hidden flex-shrink-0">
+                  <div className="flex-1 min-h-64 md:min-h-80 bg-gray-100 overflow-hidden">
                     <img
                       src={noticias[0].imagen}
                       alt={noticias[0].titulo}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <div className="p-5 md:p-6 bg-maynas-navy flex-grow flex flex-col">
+                  <div className="p-5 md:p-6 bg-maynas-navy flex flex-col">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-white/70">
                       Noticia destacada
                     </p>
@@ -515,16 +542,16 @@ export default function IntegridadInstitucional() {
                     key={index}
                     type="button"
                     onClick={() => openModal(noticia)}
-                    className={`group flex flex-col w-full text-left bg-white rounded-xl overflow-hidden ring-1 ring-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 ${focusRing}`}
+                    className={`group flex flex-col flex-1 min-h-0 w-full text-left bg-white rounded-xl overflow-hidden ring-1 ring-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 ${focusRing}`}
                   >
-                    <div className="h-40 bg-gray-100 overflow-hidden flex-shrink-0">
+                    <div className="flex-1 min-h-32 md:min-h-40 bg-gray-100 overflow-hidden">
                       <img
                         src={noticia.imagen}
                         alt={noticia.titulo}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <div className="p-4 flex-grow flex flex-col">
+                    <div className="p-4 flex flex-col">
                       <h3 className="font-display font-bold text-maynas-navy group-hover:text-maynas-red transition-colors duration-200 line-clamp-2">
                         {noticia.titulo}
                       </h3>
@@ -722,27 +749,27 @@ export default function IntegridadInstitucional() {
           </section>
         </div>
 
-        <section className="bg-maynas-navy mt-12 md:mt-16">
+        <section className="mt-12 md:mt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.22em] text-white/70 font-semibold">
+                <p className="text-[11px] uppercase tracking-[0.22em] text-maynas-red font-semibold">
                   Programa
                 </p>
-                <h2 className="font-display text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-white mt-1">
+                <h2 className="font-display text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-maynas-navy mt-1 border-l-4 border-maynas-red pl-4">
                   Programa de integridad
                 </h2>
-                <p className="mt-4 text-white/85 leading-relaxed">
+                <p className="mt-4 text-gray-600 leading-relaxed">
                   El Programa de Integridad de la MPH para el presente período
                   2024, contiene acciones comprendidas en los meses de setiembre
                   a diciembre del presente año, las cuales nos permitirán dar
                   inicio para el cierre de brechas existentes.
                 </p>
 
-                <h3 className="font-display text-xl font-bold text-white mt-8">
+                <h3 className="font-display text-xl font-bold text-maynas-navy mt-8">
                   Componentes del modelo de integridad
                 </h3>
-                <p className="mt-3 text-white/85 leading-relaxed">
+                <p className="mt-3 text-gray-600 leading-relaxed">
                   Modelo de Integridad para las entidades del sector público (D.
                   S N° 044-2018-PCM, Plan Nacional de Integridad y Lucha contra
                   la Corrupción 2018-2021). Este modelo se organiza en 9
@@ -754,7 +781,7 @@ export default function IntegridadInstitucional() {
                   sector público, aprobados por Resolución SIP N° 002-2021-PCM/SIP.
                 </p>
 
-                <h3 className="font-display text-xl font-bold text-white mt-8">
+                <h3 className="font-display text-xl font-bold text-maynas-navy mt-8">
                   Material informativo
                 </h3>
                 <div className="mt-3 flex flex-wrap gap-3">
@@ -762,7 +789,7 @@ export default function IntegridadInstitucional() {
                     href="https://repo.munihuamanga.gob.pe/Documentos_mph/Munitransparencia/integridad_institucional/taller_modelo_integridad.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 border border-white/70 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-white hover:text-maynas-navy transition-colors ${focusRing}`}
+                    className={`inline-flex items-center gap-2 border border-maynas-navy text-maynas-navy px-4 py-2 rounded-md text-sm font-semibold hover:bg-maynas-navy hover:text-white transition-colors ${focusRing}`}
                   >
                     Taller sobre el Modelo de Integridad
                   </a>
@@ -770,7 +797,7 @@ export default function IntegridadInstitucional() {
                     href="https://www.youtube.com/watch?v=RcYKK8SXCkE"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 border border-white/70 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-white hover:text-maynas-navy transition-colors ${focusRing}`}
+                    className={`inline-flex items-center gap-2 border border-maynas-navy text-maynas-navy px-4 py-2 rounded-md text-sm font-semibold hover:bg-maynas-navy hover:text-white transition-colors ${focusRing}`}
                   >
                     Modelo de Integridad para las entidades del sector público
                   </a>

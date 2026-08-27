@@ -7,6 +7,24 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] — Modernización de la página de Integridad a Tailwind
+
+### Changed
+- **`src/components/header/integridad.jsx` reescrito de Bulma + estilos inline a Tailwind** con la paleta institucional (`maynas-*`) y el patrón de la Home: hero contenido con badge de título, cards blancas/navy, banda full-width navy para "Programa de integridad". Cero Bulma, cero estilos inline, cero márgenes negativos.
+- **Secciones reestructuradas**: Integridad pública (card blanca + card navy con checklist), Conceptos clave (cards patrón Vistos), Difusiones y noticias (destacada navy + secundarias patrón Home), UFII (grid de 13 funciones numeradas con numerales grandes en rojo), Normativas (filtros Tailwind, `thead` navy, badges de categoría, contador de resultados).
+- **Modal de noticias** rediseñado al estilo Home: overlay `bg-black/70`, cierre con `Escape`, click en backdrop y botón ×.
+- **Rendimiento**: arrays estáticos (`data`, `noticias`, `ufiiFunciones`, etc.) movidos a ámbito de módulo y `filteredData` envuelto en `useMemo`.
+
+### Removed
+- `src/components/css/integridad.css` (quedaba huérfano tras quitar su import). `bulma-scoped.css` no se tocó (lo usa `boletin.jsx`).
+
+### Notes
+- Sin cambios funcionales: contenido, array `data`, PDFs, lógica de filtros y modal intactos.
+- `pnpm run build` ✓; `pnpm run lint` sin errores nuevos en `integridad.jsx` (el resto son preexistentes).
+- Resumen de sesión: `docs/sessions/SESSION_INTEGRIDAD_RESULTADOS.md` (plan original: `SESSION_INTEGRIDAD_MODERNIZACION.md`).
+
+---
+
 ## [Unreleased] — Banner de noticias en Eventos + Admin de Eventos con toggle de visibilidad
 
 ### Added
