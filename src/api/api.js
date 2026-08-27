@@ -5,16 +5,19 @@ let accessToken = null; // Access Token en memoria
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Esta es la URL base para todas las peticiones
-  headers: {
-    
-    'Content-Type': 'application/json',
-  },
+  // Sin Content-Type por defecto: axios lo establece solo (application/json para
+  // objetos y multipart/form-data con boundary para FormData). Si se fijara
+  // application/json aquí, axios convertiría los FormData a JSON y rompería los uploads.
 });
 
 // Interceptor para agregar el Access Token solo si la solicitud lo requiere
 apiClient.interceptors.request.use(
   (config) => {
     if (config.requiresAuth) { // Solo añade el Access Token si `requiresAuth` es `true`
+      // Fallback a localStorage: tras un login el token aún no está en memoria
+      if (!accessToken) {
+        accessToken = localStorage.getItem('accessToken');
+      }
       if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`; // Añadir el Access Token en los headers
       }
@@ -71,6 +74,7 @@ export const refreshToken = async () => {
   } catch (error) {
     console.error('Error al renovar el token:', error);
     window.location.href = '/login'; // Si no puedes renovar el token, redirige al login
+    throw error; // Propaga el error para que el interceptor no reintente con un token inválido
   }
 };
 
@@ -79,8 +83,9 @@ export const logout = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('id');
+  localStorage.removeItem('token');
   accessToken = null;
-  window.location.href = 'muniweb/login'; // Redirige al login después de cerrar sesión
+  window.location.href = '/login'; // Redirige al login después de cerrar sesión
 };
 
 

@@ -1,23 +1,23 @@
 import React from 'react';
-import munipay from "../../assets/img/munipay.png";
-import camion from "../../assets/img/camion.png";
+import mesaAyuda from "../../assets/img/mesa-ayuda-baml.svg";
+import siscolas from "../../assets/img/siscolas.svg";
 import violencia from "../../assets/img/violencia.png";
 import SectionHeader from './SectionHeader';
 
 const cards = [
   {
-    img: munipay,
-    alt: "Munipay",
-    title: "Munipay",
+    img: mesaAyuda,
+    alt: "Mesa de ayuda BAML",
+    title: "Mesa de ayuda BAML",
     description:
-      "Es la plataforma de pagos en línea en donde los contribuyentes podrán pagar sus impuestos prediales desde la comodidad de sus hogares.",
+      "Es el sistema de mesa de ayuda personalizado a medida a nivel interno de la municipalidad.",
   },
   {
-    img: camion,
-    alt: "Iquitos-Limpio",
-    title: "Iquitos-Limpio",
+    img: siscolas,
+    alt: "SISCOLAS",
+    title: "SISCOLAS",
     description:
-      "Es un aplicativo en el cual el vecino de Iquitos podrá recibir alertas cuando el camión de basura pase cerca de su domicilio.",
+      "Es el nuevo sistema de colas en la recepción de la Municipalidad Provincial de Maynas.",
   },
   {
     img: violencia,
@@ -34,8 +34,6 @@ const Vistos = () => {
       <SectionHeader
         eyebrow="Servicios digitales"
         title="Maynas rumbo a la digitalización"
-        linkTo="/innovation"
-        linkLabel="Ver todos"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

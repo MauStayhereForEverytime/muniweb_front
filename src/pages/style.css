@@ -79,18 +79,6 @@ body, html {
   animation: zoomIn 0.5s ease-out forwards; /* Aparece en 0.5 segundos */
 }
 
-.testimonios-container {
-  background-color: #f8f9fa;
-  padding: 40px 0;
-  margin-top: 20px;
-}
-
-.testimonios-container1 {
-  background-color: #f8f9fa;
-  padding: 40px 0;
-  margin-top: 60px;
-}
-
 form {
   background-color: #ffffff;
   border-radius: 10px;
@@ -99,30 +87,4 @@ form {
 
 button:disabled {
   background-color: #ccc;
-}
-
-.testimonios-list {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.testimonial-item {
-  background-color: #ffffff;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.testimonial-item p {
-  margin-bottom: 8px;
-}
-
-.testimonial-item .font-bold {
-  font-size: 1.1rem;
-}
-
-.testimonial-item .text-sm {
-  font-size: 0.9rem;
-  color: #777;
 }

@@ -1,121 +1,89 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from 'react';
 import Slider from 'react-slick';
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";  
-import { fetchImages, deleteImage } from '../../../services/carrouselService';
-import AddImageModal from './AddImageModal';
-import EditImageModal from './EditImageModal';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { fetchImages, mediaUrl } from '../../../services/carrouselService';
+import './home-carousel.css';
+
+const PrevArrow = ({ onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label="Anterior"
+    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-maynas-red transition-colors duration-200"
+  >
+    <FaChevronLeft />
+  </button>
+);
+
+const NextArrow = ({ onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label="Siguiente"
+    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-maynas-red transition-colors duration-200"
+  >
+    <FaChevronRight />
+  </button>
+);
 
 const Carrousel = () => {
   const [images, setImages] = useState([]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedImageId, setSelectedImageId] = useState(null);
-  const [selectedImageData, setSelectedImageData] = useState(null);
 
   useEffect(() => {
-    const getImages = async () => {
-      const data = await fetchImages();
-      setImages(data);
-    };
-    getImages();
+    fetchImages().then(setImages);
   }, []);
-
-  const handleDelete = async (id) => {
-    try {
-      const result = await deleteImage(id);
-      if (result && result.detail === 'Image deleted successfully') {
-        setImages(images.filter(image => image.ima_int_id !== id));
-      }
-    } catch (error) {
-      console.error('Error deleting image:', error);
-    }
-  };
-
-  const handleEdit = (id) => {
-    const imageToEdit = images.find(image => image.ima_int_id === id);
-    if (imageToEdit) {
-      setSelectedImageId(id);
-      setSelectedImageData(imageToEdit);
-      setIsEditModalOpen(true);
-    }
-  };
-
-  const refreshImages = async () => {
-    const data = await fetchImages();
-    setImages(data);
-  };
 
   const settings = {
     dots: true,
     infinite: true,
-    speed: 500,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
+    vertical: false,
+    verticalSwiping: false,
+    rtl: false,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    pauseOnHover: true,
+    pauseOnFocus: true,
+    fade: false,
+    cssEase: 'ease-in-out',
+    prevArrow: <PrevArrow />,
+    nextArrow: <NextArrow />,
   };
 
   return (
-    <div>
+    <div className="home-carousel-scope relative max-w-7xl mx-auto h-[420px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden bg-gray-200 rounded-xl">
       {images.length > 0 ? (
         <Slider {...settings}>
-          {images.map((image) => (
-            <div key={image.ima_int_id} className="relative">
-              <img
-                src={`data:image/jpeg;base64,${image.ima_txt_urlpath}`}
-                alt={image.ima_txt_name}
-                className="w-full object-cover"
-              />
-
-              {image.ima_txt_name && (
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-maynas-navy/85 to-transparent px-6 pb-9 pt-20">
-                  <p className="font-display text-lg md:text-xl font-bold text-white">
-                    {image.ima_txt_name}
-                  </p>
-                </div>
-              )}
-
-              {localStorage.getItem('id') != null && (
-                <div className="absolute top-3 right-3 flex gap-2">
-                  <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="p-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition duration-300"
-                  >
-                    Agregar Imagen
-                  </button>
-                  <button
-                    onClick={() => handleEdit(image.ima_int_id)}
-                    className="bg-yellow-500 text-white p-2 rounded-md shadow-md hover:bg-yellow-600 transition duration-300"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(image.ima_int_id)}
-                    className="bg-red-500 text-white p-2 rounded-md shadow-md hover:bg-red-600 transition duration-300"
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+          {images.map((image) => {
+            const showTitle = image.ima_txt_name && image.ima_boo_showtitle !== false;
+            return (
+              <div key={image.ima_int_id} className="relative h-full">
+                <img
+                  src={mediaUrl(image.ima_txt_urlpath)}
+                  alt={image.ima_txt_name}
+                />
+                {showTitle && (
+                  <div className="absolute left-4 md:left-6 lg:left-8 bottom-16 md:bottom-20 z-20 max-w-[60%] md:max-w-[50%]">
+                    <div className="bg-maynas-navy/85 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-lg shadow-lg">
+                      <p className="font-display text-lg md:text-xl lg:text-2xl font-bold text-white line-clamp-2 drop-shadow">
+                        {image.ima_txt_name}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </Slider>
       ) : (
-        <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">
+        <div className="w-full h-full flex items-center justify-center text-gray-500">
           No hay imágenes en el carrusel
         </div>
-      )}
-
-      {/* Modal para agregar imagen */}
-      {isAddModalOpen && <AddImageModal closeModal={() => setIsAddModalOpen(false)} refreshImages={refreshImages} />}
-
-      {/* Modal para editar imagen */}
-      {isEditModalOpen && selectedImageData && (
-        <EditImageModal
-          imageId={selectedImageId}
-          closeModal={() => setIsEditModalOpen(false)}
-          refreshImages={refreshImages}
-          imageDataInitial={selectedImageData}
-        />
       )}
     </div>
   );

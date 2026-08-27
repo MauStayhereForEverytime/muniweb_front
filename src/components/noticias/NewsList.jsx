@@ -1,145 +1,167 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { fetchNews, createNews } from '../../services/newsService'; // Función para obtener noticias
-import NewsItem from './NewsItem';  // Componente para mostrar cada noticia individual
-import Spinner from './Spinner';  // Importamos el spinner
+import { useEffect, useState } from 'react';
+import { fetchNews, createNews, mediaUrl } from '../../services/newsService';
+import Spinner from './Spinner';
 import QuillEditor from './QuillEditor';
 
 const NewsList = () => {
-  const [newsItems, setNewsItems] = useState([]); // Noticias cargadas
-  const [mainNews, setMainNews] = useState(null);  // Noticia principal
-  const [secondaryNews, setSecondaryNews] = useState([]); // Noticias secundarias
-  const [allNews, setAllNews] = useState([]); // Todas las noticias
-  const [currentPage, setCurrentPage] = useState(1); // Página actual
-  const [isFormVisible, setIsFormVisible] = useState(false); // Mostrar/ocultar formulario
-  const [newTitle, setNewTitle] = useState(''); // Título de la nueva noticia
-  const [newDescription, setNewDescription] = useState(''); // Descripción
-  const [newContent, setNewContent] = useState(''); // Contenido
-  const [newImage, setNewImage] = useState(''); // Imagen de la noticia
-  const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const [mainNews, setMainNews] = useState(null);
+  const [secondaryNews, setSecondaryNews] = useState([]);
+  const [allNews, setAllNews] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const [newImage, setNewImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [viewingItem, setViewingItem] = useState(null);
 
   useEffect(() => {
     const getNews = async () => {
       try {
-        setIsLoading(true);  // Activamos el cargador
-        const data = await fetchNews(); // Traemos las noticias
-        console.log("Data received:", data);
+        setIsLoading(true);
+        const data = await fetchNews();
+        console.log('Data received:', data);
 
         if (Array.isArray(data) && data.length > 0) {
-          const sortedNews = data.sort((a, b) => b.pk - a.pk); // Ordenamos las noticias
-          const main = sortedNews.find(item => item.fields.ctn_int_id === 1); // Noticia principal
-          const secondary = sortedNews.filter(item => item.fields.ctn_int_id === 2); // Noticias secundarias
+          const sortedNews = data.sort((a, b) => b.pk - a.pk);
+          const main = sortedNews.find((item) => item.fields.ctn_int_id === 1);
+          const secondary = sortedNews.filter((item) => item.fields.ctn_int_id === 2);
 
-          setMainNews(main); // Asignamos la noticia principal
-          setSecondaryNews(secondary.slice(0, 3)); // Las 3 noticias más recientes
-          setAllNews(secondary.slice(3)); // El resto de las noticias
+          setMainNews(main);
+          setSecondaryNews(secondary.slice(0, 3));
+          setAllNews(secondary.slice(3));
         }
       } catch (error) {
-        console.error("Error fetching news:", error);
+        console.error('Error fetching news:', error);
       } finally {
-        setIsLoading(false);  // Desactivamos el cargador cuando termina
+        setIsLoading(false);
       }
     };
-
-    getNews(); // Llamada para obtener las noticias
+    getNews();
   }, []);
+
+  useEffect(() => {
+    if (!viewingItem) return undefined;
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setViewingItem(null);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [viewingItem]);
 
   const pageSize = 12;
   const totalPages = Math.ceil(allNews.length / pageSize);
   const paginatedNews = allNews.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const truncateText = (text, length = 30) => {
-    return text.length > length ? text.substring(0, length) + "..." : text;
-  };
+  const truncateText = (text, length = 30) =>
+    text && text.length > length ? text.substring(0, length) + '...' : text;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!newTitle || !newDescription || !newContent || !newImage) {
-      alert("Por favor, completa todos los campos antes de enviar.");
+      alert('Por favor, completa todos los campos antes de enviar.');
       return;
     }
 
     const newNews = {
-      fields: {
-        new_txt_urlimage: newImage,
-        new_txt_tittle: newTitle,
-        new_txt_description: newDescription,
-        new_txt_content: newContent,
-        new_txt_state: 'ACTIVO',
-      },
+      new_txt_urlimage: newImage,
+      new_txt_tittle: newTitle,
+      new_txt_description: newDescription,
+      new_txt_content: newContent,
+      new_txt_state: 'ACTIVO',
     };
 
     try {
-      setIsLoading(true); // Mostramos el cargador
-      const createdNews = await createNews(newNews); // Llamamos para crear la noticia
+      setIsLoading(true);
+      const createdNews = await createNews(newNews);
 
       if (createdNews) {
-        setSecondaryNews([createdNews, ...secondaryNews]); // Actualizamos las noticias secundarias
+        const normalized = {
+          pk: createdNews.new_int_id ?? createdNews.pk,
+          fields: {
+            new_txt_urlimage: createdNews.new_txt_urlimage,
+            new_txt_tittle: createdNews.new_txt_tittle,
+            new_txt_description: createdNews.new_txt_description,
+            new_txt_content: createdNews.new_txt_content,
+            ctn_int_id: createdNews.ctn_int_id,
+          },
+        };
+        setSecondaryNews([normalized, ...secondaryNews]);
         setNewTitle('');
         setNewDescription('');
         setNewContent('');
-        setNewImage('');
-        setIsFormVisible(false); // Ocultamos el formulario
+        setNewImage(null);
+        setIsFormVisible(false);
 
-        setTimeout(() => {
-          setIsLoading(false); // Desactivamos el cargador después de un segundo
-        }, 1000);
+        setTimeout(() => setIsLoading(false), 1000);
       }
     } catch (error) {
-      console.error("Error creating news:", error);
+      console.error('Error creating news:', error);
       setIsLoading(false);
     }
   };
 
   if (isLoading) {
-    return <Spinner />;  // Si está cargando, mostramos el spinner
+    return <Spinner />;
   }
 
   return (
     <div className="w-full h-full p-2">
       <h2 className="text-xl font-bold mb-4">RECIENTES</h2>
-      {/* Contenedor con Grid para la noticia principal y secundarias */}
       <div className="grid grid-cols-4 gap-3 mb-6">
-        
-        {/* Noticia Principal: ocupa 3/4 de la columna (3/4) */}
         {mainNews && (
           <div className="col-span-3 bg-[#83CEE1] rounded-lg p-3">
-            <Link to={`/news/${mainNews.pk}`} className="block">
+            <button
+              type="button"
+              onClick={() => setViewingItem(mainNews)}
+              className="block w-full text-left"
+            >
               {mainNews.fields && mainNews.fields.new_txt_urlimage && (
                 <img
-                  src={`data:image/jpeg;base64,${mainNews.fields.new_txt_urlimage}`}
+                  src={mediaUrl(mainNews.fields.new_txt_urlimage)}
                   alt={mainNews.fields.new_txt_tittle}
-                  className="w-full h-96 object-cover rounded-lg"  // Ajusté la altura de la imagen
+                  className="w-full h-96 object-cover rounded-lg"
                 />
               )}
-              <div className="mt-3 text-black font-bold text-sm">{truncateText(mainNews.fields?.new_txt_tittle || "AGREGADO CORRECTAMENTE")}</div>
-              <div className="text-black text-xs">{truncateText(mainNews.fields?.new_txt_description || "ACTUALICE LA PAGINA")}</div>
-            </Link>
+              <div className="mt-3 text-black font-bold text-sm">
+                {truncateText(mainNews.fields?.new_txt_tittle || 'AGREGADO CORRECTAMENTE')}
+              </div>
+              <div className="text-black text-xs">
+                {truncateText(mainNews.fields?.new_txt_description || 'ACTUALICE LA PAGINA')}
+              </div>
+            </button>
           </div>
         )}
 
-        {/* Noticias Secundarias: ocupa 1/4 de la columna (1/4) */}
         <div className="col-span-1 grid grid-rows-3 gap-2">
           {secondaryNews.map((item, index) => (
             <div key={index} className="bg-[#D3D3D3] p-2 rounded-lg">
-              <Link to={`/news/${item.pk}`} className="block">
+              <button
+                type="button"
+                onClick={() => setViewingItem(item)}
+                className="block w-full text-left"
+              >
                 {item.fields && item.fields.new_txt_urlimage && (
                   <img
-                    src={`data:image/jpeg;base64,${item.fields.new_txt_urlimage}`}
+                    src={mediaUrl(item.fields.new_txt_urlimage)}
                     alt={item.fields.new_txt_tittle}
-                    className="w-full h-24 object-cover rounded-lg"  // Imagen más pequeña
+                    className="w-full h-24 object-cover rounded-lg"
                   />
                 )}
-                <div className="mt-2 text-black text-xs font-bold">{truncateText(item.fields?.new_txt_tittle || "AGREGADO CORRECTAMENTE")}</div>
-                <div className="text-black text-[10px]">{truncateText(item.fields?.new_txt_description || "ACTUALICE LA PAGINA")}</div>
-              </Link>
+                <div className="mt-2 text-black text-xs font-bold">
+                  {truncateText(item.fields?.new_txt_tittle || 'AGREGADO CORRECTAMENTE')}
+                </div>
+                <div className="text-black text-[10px]">
+                  {truncateText(item.fields?.new_txt_description || 'ACTUALICE LA PAGINA')}
+                </div>
+              </button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Botón para agregar nueva noticia */}
       <div className="flex justify-end mb-4">
         <button
           onClick={() => setIsFormVisible(!isFormVisible)}
@@ -149,7 +171,6 @@ const NewsList = () => {
         </button>
       </div>
 
-      {/* Formulario para agregar una nueva noticia */}
       {isFormVisible && (
         <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-100 rounded-md">
           <div className="mb-4">
@@ -159,19 +180,11 @@ const NewsList = () => {
               accept="image/*"
               onChange={(e) => {
                 const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (event) => {
-                    const base64String = event.target.result.split(',')[1]; // Obtener solo el Base64
-                    setNewImage(base64String);
-                  };
-                  reader.readAsDataURL(file);
-                }
+                if (file) setNewImage(file);
               }}
               className="w-full p-2 border border-gray-300 rounded-md"
               required
             />
-
           </div>
           <div className="mb-4">
             <label className="block text-sm font-semibold">Título:</label>
@@ -194,7 +207,6 @@ const NewsList = () => {
             />
           </div>
           <label className="block mt-4">Contenido</label>
-          {/* Si usas QuillEditor o algún editor de texto enriquecido, ponlo aquí */}
           <QuillEditor value={newContent} onChange={setNewContent} />
           <button
             type="submit"
@@ -206,16 +218,35 @@ const NewsList = () => {
         </form>
       )}
 
-      {/* Sección "Todas las Noticias" */}
       {allNews.length > 0 && (
         <div className="flex flex-col items-center px-6">
           <h2 className="text-xl font-bold mb-8 text-center">Todas las Noticias</h2>
           <div className="grid grid-cols-3 gap-8 w-full max-w-7xl justify-items-center">
             {paginatedNews.map((item, index) => (
-              <NewsItem key={index} news={item} />
+              <button
+                key={index}
+                type="button"
+                onClick={() => setViewingItem(item)}
+                className="bg-white rounded-lg shadow hover:shadow-lg overflow-hidden text-left w-full"
+              >
+                {item.fields && item.fields.new_txt_urlimage && (
+                  <img
+                    src={mediaUrl(item.fields.new_txt_urlimage)}
+                    alt={item.fields.new_txt_tittle}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                <div className="p-4">
+                  <h3 className="font-bold text-gray-800 line-clamp-2">
+                    {item.fields?.new_txt_tittle}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1 line-clamp-3">
+                    {item.fields?.new_txt_description}
+                  </p>
+                </div>
+              </button>
             ))}
           </div>
-          {/* Paginación */}
           <div className="flex justify-center mt-8 gap-6">
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
@@ -224,7 +255,9 @@ const NewsList = () => {
             >
               Anterior
             </button>
-            <span className="text-lg">{currentPage} / {totalPages}</span>
+            <span className="text-lg">
+              {currentPage} / {totalPages}
+            </span>
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
@@ -232,6 +265,68 @@ const NewsList = () => {
             >
               Siguiente
             </button>
+          </div>
+        </div>
+      )}
+
+      {viewingItem && (
+        <div
+          className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4"
+          onClick={() => setViewingItem(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {viewingItem.fields && viewingItem.fields.new_txt_urlimage && (
+              <div className="relative w-full max-h-[60vh] bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <img
+                  src={mediaUrl(viewingItem.fields.new_txt_urlimage)}
+                  alt={viewingItem.fields.new_txt_tittle || 'Noticia'}
+                  className="max-h-[60vh] w-auto max-w-full object-contain rounded-t-lg"
+                />
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center text-lg leading-none"
+                  onClick={() => setViewingItem(null)}
+                  aria-label="Cerrar"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            <div className="p-6 overflow-y-auto flex-1">
+              {viewingItem.fields?.new_txt_tittle && (
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  {viewingItem.fields.new_txt_tittle}
+                </h2>
+              )}
+              {viewingItem.fields?.new_txt_description && (
+                <p className="text-gray-600 italic mb-4">
+                  {viewingItem.fields.new_txt_description}
+                </p>
+              )}
+              {viewingItem.fields?.new_txt_content && (
+                <div
+                  className="prose max-w-none text-gray-800"
+                  dangerouslySetInnerHTML={{ __html: viewingItem.fields.new_txt_content }}
+                />
+              )}
+            </div>
+            <div className="p-4 border-t flex justify-between items-center flex-shrink-0 bg-gray-50">
+              <span className="text-xs text-gray-500">
+                Pulsa <kbd className="px-1 py-0.5 bg-gray-200 rounded">Esc</kbd> o haz clic fuera para cerrar
+              </span>
+              <button
+                type="button"
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                onClick={() => setViewingItem(null)}
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}

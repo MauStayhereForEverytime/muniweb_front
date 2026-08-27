@@ -10,19 +10,10 @@ const EditImageModal = ({ imageId, closeModal, refreshImages, imageDataInitial }
   const [successMessage, setSuccessMessage] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, files } = e.target;
 
     if (type === 'file') {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = (event) => {
-          // Solo toma el valor base64 necesario si el archivo es una imagen
-          const base64String = event.target.result.split(',')[1]; 
-          setImageData({ ...imageData, ima_txt_urlpath: base64String });
-        };
-        reader.readAsDataURL(file);
-      }
+      setImageData({ ...imageData, ima_txt_urlpath: files?.[0] || null });
     } else {
       setImageData({ ...imageData, [name]: value });
     }

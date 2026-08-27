@@ -1,6 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { mediaUrl } from '../../services/newsService';
 
 const BlogList = ({ blogItems, onEdit, onDelete }) => {
   return (
@@ -25,7 +25,7 @@ const BlogList = ({ blogItems, onEdit, onDelete }) => {
                 {/* Imagen ocupa todo el ancho del contenedor blanco */}
                 {item.fields?.new_txt_urlimage && (
                   <img
-                    src={`data:image/jpeg;base64,${item.fields.new_txt_urlimage}`}
+                    src={mediaUrl(item.fields.new_txt_urlimage)}
                     alt={item.fields.new_txt_tittle}
                     className="w-full h-64 object-cover"
                   />

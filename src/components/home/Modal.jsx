@@ -6,6 +6,14 @@ const Modal = ({ isOpen, closeModal }) => {
   const [loading, setLoading] = useState(true);
   const [hasImages, setHasImages] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+const mediaUrl = (path) => {
+  if (!path) return '';
+  const p = String(path);
+  if (/^https?:\/\//i.test(p)) return p;
+  const base = apiUrl.replace(/\/$/, '');
+  if (p.startsWith('/media/')) return `${base}${p}`;
+  return `${base}/media/${p.replace(/^\//, '')}`;
+};
 
   useEffect(() => {
     if (isOpen) {
@@ -48,7 +56,7 @@ const Modal = ({ isOpen, closeModal }) => {
           ) : (
             <div className="bg-white p-4 rounded-lg w-full">
               <img
-                src={images[0].ima_txt_urlpath}
+                src={mediaUrl(images[0].ima_txt_urlpath)}
                 alt={images[0].ima_txt_name}
                 className="max-w-full h-auto rounded-md"
               />

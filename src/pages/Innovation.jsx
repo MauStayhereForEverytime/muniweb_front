@@ -8,7 +8,7 @@ const Innovation = () => {
   const [innovations, setInnovations] = useState([]);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
-  const [newImage, setNewImage] = useState('');
+  const [newImage, setNewImage] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false); // Controla la visibilidad del formulario
 
   // Al montar el componente, obtenemos todas las innovaciones
@@ -31,12 +31,10 @@ const Innovation = () => {
     }
 
     const newInnovation = {
-      fields: {
-        inn_txt_image: newImage,
-        inn_txt_tittle: newTitle,
-        inn_txt_description: newDescription,
-        inn_txt_state: 'ACTIVO', // Asegúrate de que 'ACTIVO' es el estado correcto
-      },
+      inn_txt_image: newImage,
+      inn_txt_tittle: newTitle,
+      inn_txt_description: newDescription,
+      inn_txt_state: 'ACTIVO',
     };
 
     try {
@@ -46,7 +44,7 @@ const Innovation = () => {
         setInnovations([createdInnovation, ...innovations]); // Actualizamos las innovaciones con la nueva innovación
         setNewTitle('');
         setNewDescription('');
-        setNewImage('');
+        setNewImage(null);
         setIsFormVisible(false); // Ocultamos el formulario
       }
     } catch (error) {
@@ -90,13 +88,7 @@ const Innovation = () => {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      setNewImage(event.target.result.split(',')[1]); // Guardamos solo el contenido Base64
-                    };
-                    reader.readAsDataURL(file);
-                  }
+                  if (file) setNewImage(file);
                 }}
                 className="w-full p-2 border border-gray-300 rounded-md"
                 required

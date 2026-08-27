@@ -5,16 +5,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Mensaje de bienvenida */}
       <h1>Bienvenido a tu Dashboard</h1>
-      <p>En este espacio puedes gestionar todos tus compromisos e imágenes de manera sencilla.</p>
-
-      {/* Instrucciones para compromisos */}
-      <section className="dashboard-section">
-        <h2>Gestiona tus compromisos</h2>
-        <p>
-          Para actualizar, agregar o eliminar compromisos, dirígete a la sección <strong>"Compromisos"</strong>.
-          Allí podrás gestionar todos tus compromisos fácilmente.
-        </p>
-      </section>
+      <p>En este espacio puedes gestionar tus imágenes y noticias de manera sencilla.</p>
 
       {/* Instrucciones para imágenes */}
       <section className="dashboard-section">

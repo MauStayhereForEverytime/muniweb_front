@@ -1,173 +1,133 @@
-import React, { useState } from "react";
-import { FaFacebook, FaYoutube, FaGooglePlay } from 'react-icons/fa';
+import { FaFacebook, FaYoutube } from "react-icons/fa";
+import escudoMaynas from "../assets/img/Escudo_de_Iquitos.png";
+
+const municipalidadLinks = [
+  { label: "Ciudad", href: "/ciudad" },
+  { label: "Funcionarios", href: "https://www.gob.pe/institucion/munimaynas/funcionarios", external: true },
+  { label: "Organigrama", href: "https://www.gob.pe/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTY3MDkyLCJwdXIiOiJibG9iX2lkIn19--b0afc26b91b791810814a769277de7c2f4513436/ORGANIGRAMA%20ESTRUCTURAL%20DE%20LA%20MPM%202019%20-CONSOLIDADO.pdf", external: true },
+  { label: "Estructura funcional", href: "https://cdn.www.gob.pe/uploads/document/file/1892018/ROF%202020.pdf.pdf?v=1620930425", external: true },
+  { label: "Noticias", href: "https://www.gob.pe/institucion/munimaynas/noticias", external: true },
+  { label: "COPROSEC", href: "https://www.gob.pe/81110-municipalidad-provincial-de-maynas-comite-provincial-de-seguridad-ciudadana-coprosec", external: true },
+];
+
+const serviciosLinks = [
+  { label: "Mesa de partes", href: "https://facilita.gob.pe/t/466", external: true },
+  { label: "Portal de Transparencia", href: "https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=1605#.Y9fNiHbMIdU", external: true },
+  { label: "Libro de reclamaciones", href: "https://reclamos.servicios.gob.pe/?institution_id=313", external: true },
+  { label: "Convocatorias CAS", href: "https://www.gob.pe/institucion/munimaynas/colecciones/50968-convocatorias-de-trabajo-muni-maynas", external: true },
+];
+
+const contactoLinks = [
+  { label: "Contáctanos", href: "https://www.gob.pe/institucion/munimaynas/contacto-y-numeros-de-emergencias", external: true },
+  { label: "SENCICO", href: "http://www.sencico.gob.pe/", external: true },
+];
+
+const redesSociales = [
+  {
+    label: "Facebook de la Municipalidad Provincial de Maynas",
+    href: "https://web.facebook.com/munimaynasperu",
+    icon: FaFacebook,
+  },
+  {
+    label: "YouTube de la Municipalidad Provincial de Maynas",
+    href: "https://www.youtube.com/@municipalidadprovincialdem9756",
+    icon: FaYoutube,
+  },
+];
+
+const FooterColumn = ({ title, links }) => (
+  // eslint-disable-next-line react/prop-types
+  <nav aria-label={title}>
+    <h3 className="text-[15px] md:text-base font-semibold tracking-wide text-white uppercase mb-4 relative inline-block">
+      {title}
+      <span
+        aria-hidden="true"
+        className="absolute left-0 -bottom-1 h-[2px] w-6 bg-maynas-red rounded-full"
+      />
+    </h3>
+    <ul className="space-y-2 text-[14px] leading-relaxed">
+      {links.map((link) => (
+        <li key={link.label}>
+          <a
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+            className="text-white/80 hover:text-white hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-maynas-navy rounded-sm transition-colors"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+);
 
 const Footer = () => {
-  const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
-  const [isConvocatoriasOpen, setIsConvocatoriasOpen] = useState(false);
-  const [isContactosOpen, setIsContactosOpen] = useState(false);
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="relative w-full bg-[#23355B]">
-      {/* Contenedor principal */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <footer className="bg-maynas-navy text-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          <div className="sm:col-span-2 lg:col-span-1 flex flex-col items-center text-center">
+            <a
+              href="/"
+              className="inline-flex items-center gap-3 mb-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-maynas-navy rounded-md"
+              aria-label="Ir al inicio - Municipalidad Provincial de Maynas"
+            >
+              <img
+                src={escudoMaynas}
+                alt="Escudo de la Municipalidad Provincial de Maynas"
+                className="h-20 w-auto bg-white/95 rounded-md p-1.5"
+                width="80"
+                height="80"
+              />
+              <span className="sr-only">Municipalidad Provincial de Maynas</span>
+            </a>
+            <p className="text-[15px] font-semibold leading-snug">
+              Municipalidad Provincial de Maynas
+            </p>
+            <p className="mt-1 text-sm text-white/75">
+              Iquitos · Loreto · Perú
+            </p>
 
-        {/* Estructura de dos columnas, ajustando en pantallas pequeñas */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 text-white text-base font-normal">
-
-          {/* Columna principal (80%) */}
-          <div className="col-span-3 md:col-span-4">
-            {/* Encabezado de "Sobre Nosotros" */}
-            <div className="text-lg font-semibold mb-4 flex justify-between items-center">
-              <span>Sobre Nosotros:</span>
-              <button
-                onClick={() => setIsAboutUsOpen(!isAboutUsOpen)}
-                className="md:hidden text-white"
-              >
-                {isAboutUsOpen ? "Ocultar" : "Ver"}
-              </button>
-            </div>
-            <hr className="border-red-700 border-2 mb-4" />
-
-            {/* Tabla de Categorías */}
-            <div className={`${isAboutUsOpen ? '' : 'hidden'} md:block`}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Primer bloque de categorías */}
-                <div>
-                  <ul>
-                    <li><a href="/ciudad" className="hover:text-[#AB0A0A]">CIUDAD</a></li>
-                    <li><a href="https://www.gob.pe/institucion/munimaynas/funcionarios" className="hover:text-[#AB0A0A]">FUNCIONARIOS</a></li>
-                    <li><a href="/testimonios" className="hover:text-[#AB0A0A]">TESTIMONIOS</a></li>
-                  </ul>
-                </div>
-
-                {/* Segundo bloque de categorías */}
-                <div>
-                  <ul>
-                    <li><a href="https://www.gob.pe/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTY3MDkyLCJwdXIiOiJibG9iX2lkIn19--b0afc26b91b791810814a769277de7c2f4513436/ORGANIGRAMA%20ESTRUCTURAL%20DE%20LA%20MPM%202019%20-CONSOLIDADO.pdf" className="hover:text-[#AB0A0A]">ORGANIGRAMA</a></li>
-                    <li><a href="/noticias" className="hover:text-[#AB0A0A]">NOTICIAS</a></li>
-                    <li><a href="https://www.gob.pe/81110-municipalidad-provincial-de-maynas-comite-provincial-de-seguridad-ciudadana-coprosec" className="hover:text-[#AB0A0A]">COPROSEC</a></li>
-                  </ul>
-                </div>
-
-                {/* Tercer bloque de categorías */}
-                <div>
-                  <ul>
-                    <li><a href="https://cdn.www.gob.pe/uploads/document/file/1892018/ROF%202020.pdf.pdf?v=1620930425" className="hover:text-[#AB0A0A]">ESTRUCTURA FUNCIONAL</a></li>
-                    {/* <li><a href="/blog" className="hover:text-[#AB0A0A]">BLOG</a></li> */}
-                    <li><a href="/compromiso" className="hover:text-[#AB0A0A]">COMPROMISOS</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-              <br />
-
-            <div className="text-lg font-semibold mb-4 flex justify-between items-center">
-              <span>Enlaces externos:</span>
-              <button
-                onClick={() => setIsAboutUsOpen(!isAboutUsOpen)}
-                className="md:hidden text-white"
-              >
-                {isAboutUsOpen ? "Ocultar" : "Ver"}
-              </button>
-            </div>
-            <hr className="border-red-700 border-2 mb-4" />
-
-            <div className={`${isAboutUsOpen ? '' : 'hidden'} md:block`}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Primer bloque de categorías */}
-                <div>
-                  <ul>
-                    <li><a href="http://www.sencico.gob.pe/" className="hover:text-[#AB0A0A]">SENCICO</a></li>
-                  </ul>
-                </div>
-
-              </div>
-              </div>
-          </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          {/* Columna secundaria (20%) */}
-          <div className="col-span-2 md:col-span-1">
-            {/* Encabezado de "Convocatorias" */}
-            <div className="text-lg font-semibold mb-4 flex justify-between items-center">
-              <span>Convocatorias:</span>
-              <button
-                onClick={() => setIsConvocatoriasOpen(!isConvocatoriasOpen)}
-                className="md:hidden text-white"
-              >
-                {isConvocatoriasOpen ? "Ocultar" : "Ver"}
-              </button>
-            </div>
-            <hr className="border-red-700 border-2 mb-4" />
-
-            {/* Cuerpo de "Convocatorias" */}
-            <div className={`${isConvocatoriasOpen ? '' : 'hidden'} md:block`}>
-              <div className="text-base font-normal text-left">
-                <ul>
-                  <li><a href="https://www.gob.pe/institucion/munimaynas/colecciones/50968-convocatorias-de-trabajo-muni-maynas" className="hover:text-[#AB0A0A]">Contrataciones CAS</a></li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Encabezado de "Contactos" */}
-            <div className="text-lg font-semibold mt-6 mb-4 flex justify-between items-center">
-              <span>Contactos:</span>
-              <button
-                onClick={() => setIsContactosOpen(!isContactosOpen)}
-                className="md:hidden text-white"
-              >
-                {isContactosOpen ? "Ocultar" : "Ver"}
-              </button>
-            </div>
-            <hr className="border-red-700 border-2 mb-4" />
-
-            {/* Cuerpo de "Contactos" */}
-            <div className={`${isContactosOpen ? '' : 'hidden'} md:block`}>
-              <div className="text-base font-normal text-left">
-                <ul>
-                  <li><a href="https://reclamos.servicios.gob.pe/?institution_id=313" className="hover:text-[#AB0A0A]">Libro de reclamaciones</a></li>
-                  <li><a href="https://facilita.gob.pe/t/466" className="hover:text-[#AB0A0A]">Mesa de partes</a></li>
-                  <li><a href="https://www.transparencia.gob.pe/enlaces/pte_transparencia_enlaces.aspx?id_entidad=1605#.Y9fNiHbMIdU" className="hover:text-[#AB0A0A]">Portal de Transparencia</a></li>
-                  <li><a href="https://www.gob.pe/institucion/munimaynas/contacto-y-numeros-de-emergencias" className="hover:text-[#AB0A0A]">Contactanos</a></li>
-                </ul>
-              </div>
+            <div className="mt-6 w-full">
+              <p className="text-xs uppercase tracking-wider text-white/70 mb-3">
+                Síguenos
+              </p>
+              <ul className="flex items-center justify-center gap-3">
+                {redesSociales.map(({ label, href, icon: Icon }) => (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-maynas-red hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-maynas-navy transition-colors"
+                    >
+                      <Icon className="text-lg" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-        </div>
 
-        {/* Línea roja debajo de "Todas las categorias" */}
-        <div className="border-t-6 border-[#AB0A0A] mt-6"></div>
-
-        {/* Iconos de Redes Sociales */}
-        <div className="flex justify-center gap-6 mt-4">
-          <a href="https://web.facebook.com/munimaynasperu" target="_blank" rel="noopener noreferrer">
-            <FaFacebook className="text-white text-2xl hover:text-[#AB0A0A]" />
-          </a>
-          <a href="https://www.youtube.com/@municipalidadprovincialdem9756" target="_blank" rel="noopener noreferrer">
-            <FaYoutube className="text-white text-2xl hover:text-[#AB0A0A]" />
-          </a>
-          <a href="https://play.google.com/store/apps/dev?id=6024497551091084073" target="_blank" rel="noopener noreferrer">
-            <FaGooglePlay className="text-white text-2xl hover:text-[#AB0A0A]" />
-          </a>
+          <FooterColumn title="Municipalidad" links={municipalidadLinks} />
+          <FooterColumn title="Servicios al ciudadano" links={serviciosLinks} />
+          <FooterColumn title="Contacto y enlaces" links={contactoLinks} />
         </div>
       </div>
 
-      {/* Pie de página */}
-      <div className="w-full bg-[#1E1E1E] text-white text-xs font-normal text-center py-2 mt-6">
-        <p>© 2025 Municipalidad Provincial de Maynas - Derechos Reservados. Desarrollado por: OSTI-MPM</p>
+      <div className="bg-maynas-navyDark border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pl-4 sm:pl-28 md:pl-32 lg:pl-32 flex flex-col sm:flex-row items-center justify-between gap-2 text-[13px] text-white/80">
+          <p className="text-center sm:text-left">
+            © {year} Municipalidad Provincial de Maynas · Desarrollado por OSTI-MPM
+          </p>
+          <p className="text-center sm:text-right text-white/60">
+            Todos los derechos reservados
+          </p>
+        </div>
       </div>
     </footer>
   );

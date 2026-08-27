@@ -1,7 +1,7 @@
 // src/components/innovation/InnovationList.js
 
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { mediaUrl } from '../../services/innovationService';
 
 const InnovationList = ({ innovationItems }) => {
   return (
@@ -13,7 +13,7 @@ const InnovationList = ({ innovationItems }) => {
               {item.fields && item.fields.inn_txt_image && (
                 <div className="w-44 h-44 min-w-[160px] min-h-[160px] rounded-full overflow-hidden mb-2 bg-white">
                   <img
-                    src={`data:image/jpeg;base64,${item.fields.inn_txt_image}`}
+                    src={mediaUrl(item.fields.inn_txt_image)}
                     alt={item.fields.inn_txt_tittle}
                     className="w-full h-full object-contain"
                   />

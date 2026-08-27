@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchNewsById, deleteNews, updateNews } from '../../services/newsService';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Íconos de edición y eliminación
-import QuillEditor from '../noticias/QuillEditor'; // Asegúrate de la importación correcta
-import Header from '../Header'; // Agregamos el Header
-import Footer from '../Footer'; // Agregamos el Footer
-import './BlogInfo.css'; // Asegúrate de tener el CSS para los estilos personalizados
+import { fetchNewsById, deleteNews, updateNews, mediaUrl } from '../../services/newsService';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import QuillEditor from '../noticias/QuillEditor';
+import Header from '../Header';
+import Footer from '../Footer';
+import './BlogInfo.css';
 
 const NewsInfo = () => {
   const { id } = useParams();
@@ -15,7 +15,7 @@ const NewsInfo = () => {
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedDescription, setUpdatedDescription] = useState('');
   const [updatedContent, setUpdatedContent] = useState('');
-  const [updatedImage, setUpdatedImage] = useState('');
+  const [updatedImage, setUpdatedImage] = useState(null);
 
   useEffect(() => {
     const getNews = async () => {
@@ -24,7 +24,7 @@ const NewsInfo = () => {
       setUpdatedTitle(data[0].fields.new_txt_tittle);
       setUpdatedDescription(data[0].fields.new_txt_description);
       setUpdatedContent(data[0].fields.new_txt_content);
-      setUpdatedImage(data[0].fields.new_txt_urlimage);
+      setUpdatedImage(null);
     };
 
     getNews();
@@ -46,12 +46,10 @@ const NewsInfo = () => {
   // Función para manejar la edición
   const handleEdit = async () => {
     const updatedData = {
-      fields: {
-        new_txt_tittle: updatedTitle,
-        new_txt_description: updatedDescription,
-        new_txt_content: updatedContent,
-        new_txt_urlimage: updatedImage,
-      },
+      new_txt_tittle: updatedTitle,
+      new_txt_description: updatedDescription,
+      new_txt_content: updatedContent,
+      new_txt_urlimage: updatedImage,
     };
 
     const success = await updateNews(id, updatedData);
@@ -102,14 +100,7 @@ const NewsInfo = () => {
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        const base64String = event.target.result.split(',')[1]; // Extraemos solo el Base64
-                        setUpdatedImage(base64String);
-                      };
-                      reader.readAsDataURL(file);
-                    }
+                    if (file) setUpdatedImage(file);
                   }}
                   className="w-full p-2 border border-gray-300 rounded"
                 />
@@ -147,10 +138,10 @@ const NewsInfo = () => {
           // Vista normal de la noticia
           <div className="news-info">
             {news.new_txt_urlimage && (
-              <img 
-                src={`data:image/jpeg;base64,${news.new_txt_urlimage}`}
-                alt={news.new_txt_tittle} 
-                className="news-image" 
+              <img
+                src={mediaUrl(news.new_txt_urlimage)}
+                alt={news.new_txt_tittle}
+                className="news-image"
               />
             )}
             <h1 className="news-title">{news.new_txt_tittle}</h1>

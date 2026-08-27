@@ -1,27 +1,32 @@
 import axios from 'axios';
+import apiClient from '../api/api';
 
-// Función para obtener todas las innovaciones
 const apiUrl = import.meta.env.VITE_API_URL;
+
+export const mediaUrl = (path) => {
+  if (!path) return '';
+  const p = String(path);
+  if (/^https?:\/\//i.test(p)) return p;
+  const base = apiUrl.replace(/\/$/, '');
+  if (p.startsWith('/media/')) return `${base}${p}`;
+  return `${base}/media/${p.replace(/^\//, '')}`;
+};
+
 export const fetchInnovations = async () => {
   try {
-    const response = await axios.get(apiUrl+'api/innovations/');
-    const data = JSON.parse(response.data);  // Parseamos el string JSON para convertirlo en un array
-    console.log("Innovations parsed:", data);  // Asegúrate de que el resultado después de parsear sea un array
-    return data;  // Ahora deberíamos tener un array de objetos
+    const response = await axios.get(apiUrl + 'api/innovations/');
+    const data = JSON.parse(response.data);
+    return data;
   } catch (error) {
     console.error('Error fetching innovations:', error);
-    return [];  // En caso de error, devolvemos un array vacío
+    return [];
   }
 };
 
-// Función para obtener una innovación por su ID
 export const fetchInnovationById = async (id) => {
   try {
-    console.log(`Fetching innovation with ID: ${id}`);
-    const response = await axios.get(apiUrl+`api/innovations/${id}`);
-    console.log("Response received:", response);
+    const response = await axios.get(apiUrl + `api/innovations/${id}`);
     const data = JSON.parse(response.data);
-    console.log("Parsed data:", data);
     return data;
   } catch (error) {
     console.error('Error fetching innovation by ID:', error.response ? error.response.data : error.message);
@@ -29,11 +34,18 @@ export const fetchInnovationById = async (id) => {
   }
 };
 
-// Función para crear una nueva innovación
+const buildFormData = (payload) => {
+  const fd = new FormData();
+  if (payload.inn_txt_tittle !== undefined) fd.append('inn_txt_tittle', payload.inn_txt_tittle || '');
+  if (payload.inn_txt_description !== undefined) fd.append('inn_txt_description', payload.inn_txt_description || '');
+  if (payload.inn_txt_image instanceof File) fd.append('inn_txt_image', payload.inn_txt_image);
+  return fd;
+};
+
 export const createInnovation = async (newInnovation) => {
   try {
-    const response = await axios.post(apiUrl+'innovations/add', newInnovation);
-    console.log("New innovation added:", response.data);
+    const fd = buildFormData(newInnovation);
+    const response = await apiClient.post('innovations/add', fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error creating innovation:', error);
@@ -41,23 +53,20 @@ export const createInnovation = async (newInnovation) => {
   }
 };
 
-// Función para eliminar una innovación
 export const deleteInnovation = async (id) => {
   try {
-    const response = await axios.delete(apiUrl+`innovations/${id}/delete/`);
-    console.log("Innovation deleted:", response.data);
-    return response.status === 204;  // Retorna true si la eliminación fue exitosa
+    const response = await apiClient.delete(`innovations/${id}/delete/`, { requiresAuth: true });
+    return response.status === 204;
   } catch (error) {
     console.error('Error deleting innovation:', error);
     return false;
   }
 };
 
-// Función para editar una innovación
 export const updateInnovation = async (id, updatedInnovation) => {
   try {
-    const response = await axios.put(apiUrl+`innovations/${id}/edit/`, updatedInnovation);
-    console.log("Innovation updated:", response.data);
+    const fd = buildFormData(updatedInnovation);
+    const response = await apiClient.put(`innovations/${id}/edit/`, fd, { requiresAuth: true });
     return response.data;
   } catch (error) {
     console.error('Error updating innovation:', error);
