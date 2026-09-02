@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { sanitizeHtml } from '../../../utils/sanitize';
 import { useParams } from 'react-router-dom';
 import { fetchEventImageById, mediaUrl } from '../../../services/eventService';
 import Header from '../../Header';
@@ -40,7 +41,7 @@ const EventosInfo = () => {
           <h1 className="news-title">{image.fields.ima_txt_name}</h1>
           <div
             className="news-content"
-            dangerouslySetInnerHTML={{ __html: image.fields.ima_txt_description }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(image.fields.ima_txt_description) }}
           />
         </div>
       </div>

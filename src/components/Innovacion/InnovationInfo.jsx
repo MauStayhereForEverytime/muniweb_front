@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { sanitizeHtml } from '../../utils/sanitize';
+import { pickValidImageFile } from '../../utils/validateImage';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import QuillEditor from '../noticias/QuillEditor';
@@ -108,7 +110,7 @@ const InnovationInfo = () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  const file = e.target.files[0];
+                  const file = pickValidImageFile(e);
                   if (file) setUpdatedImage(file);
                 }}
                 className="w-full p-2 border border-gray-300 rounded"
@@ -143,7 +145,7 @@ const InnovationInfo = () => {
               <img src={mediaUrl(innovation.inn_txt_image)} alt={innovation.inn_txt_tittle} className="innovation-image" />
             )}
             <h1 className="innovation-title">{innovation.inn_txt_tittle}</h1>
-            <div className="innovation-content" dangerouslySetInnerHTML={{ __html: innovation.inn_txt_description }} />
+            <div className="innovation-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(innovation.inn_txt_description) }} />
   
             {/* Fecha de creación */}
             {innovation.inn_datetime_datecreate && (

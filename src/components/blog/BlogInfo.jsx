@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { sanitizeHtml } from '../../utils/sanitize';
+import { pickValidImageFile } from '../../utils/validateImage';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchNewsById, deleteNews, updateNews, mediaUrl } from '../../services/newsService';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -99,7 +101,7 @@ const NewsInfo = () => {
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
-                    const file = e.target.files[0];
+                    const file = pickValidImageFile(e);
                     if (file) setUpdatedImage(file);
                   }}
                   className="w-full p-2 border border-gray-300 rounded"
@@ -146,7 +148,7 @@ const NewsInfo = () => {
             )}
             <h1 className="news-title">{news.new_txt_tittle}</h1>
             <p className="news-description">{news.new_txt_description}</p>
-            <div className="news-content" dangerouslySetInnerHTML={{ __html: news.new_txt_content }} />
+            <div className="news-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(news.new_txt_content) }} />
 
             {/* Fecha de creación */}
             {news.new_datetime_datecreate && (

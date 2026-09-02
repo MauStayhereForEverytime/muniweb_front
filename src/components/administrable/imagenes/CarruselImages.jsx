@@ -1,6 +1,7 @@
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { fetchImages, addImage, editImage, deleteImage, mediaUrl } from '../../../services/carrouselService';
+import { pickValidImageFile } from '../../../utils/validateImage';
 
 const RECOMMENDED = { width: 1920, height: 720 };
 const MIN = { width: 1600, height: 600 };
@@ -37,7 +38,7 @@ const CarruselImages = () => {
   }, []);
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) {
       setNewImage({ ...newImage, ima_txt_urlpath: file });
       setNewImagePreview(URL.createObjectURL(file));
@@ -47,7 +48,7 @@ const CarruselImages = () => {
   };
 
   const handleEditImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) {
       setEditImageData({ ...editImageData, ima_txt_urlpath: file });
       setEditImagePreview(URL.createObjectURL(file));

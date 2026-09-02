@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { pickValidImageFile } from '../../../utils/validateImage';
 import { editEventImage } from '../../../services/eventService';
 
 const EditEventImageModal = ({ imageId, closeModal, refreshImages, imageDataInitial }) => {
@@ -40,7 +41,7 @@ const EditEventImageModal = ({ imageId, closeModal, refreshImages, imageDataInit
           type="file"
           accept="image/*"
           onChange={(e) => {
-            const file = e.target.files[0];
+            const file = pickValidImageFile(e);
             if (file) setEditedImage({ ...editedImage, ima_txt_urlpath: file });
           }}
           className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

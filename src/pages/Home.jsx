@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { sanitizeHtml } from '../utils/sanitize';
 import { fetchNews, mediaUrl } from '../services/newsService';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -190,7 +191,7 @@ const Home = () => {
                 {viewingItem.fields?.new_txt_content && (
                   <div
                     className="prose max-w-none text-gray-800 break-words [overflow-wrap:anywhere]"
-                    dangerouslySetInnerHTML={{ __html: viewingItem.fields.new_txt_content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(viewingItem.fields.new_txt_content) }}
                   />
                 )}
               </div>

@@ -1,5 +1,6 @@
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { pickValidImageFile } from '../../../utils/validateImage';
 import apiClient from '../../../api/api';
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -35,7 +36,7 @@ const Modal1 = () => {
   };
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) {
       setNewImage({ ...newImage, ima_txt_urlpath: file });
       setNewImagePreview(URL.createObjectURL(file));
@@ -43,7 +44,7 @@ const Modal1 = () => {
   };
 
   const handleEditImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) {
       setEditImage({ ...editImage, ima_txt_urlpath: file });
       setEditImagePreview(URL.createObjectURL(file));

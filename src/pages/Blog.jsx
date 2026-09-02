@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { pickValidImageFile } from '../utils/validateImage';
 import Footer from '../components/Footer';
 import BlogList from '../components/blog/BlogList';
 import { fetchBlogs, createBlog } from '../services/blogService';
@@ -24,7 +25,7 @@ const [newImagePreview, setNewImagePreview] = useState(null);
   }, []);
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) {
       setNewImage(file);
       setNewImagePreview(URL.createObjectURL(file));

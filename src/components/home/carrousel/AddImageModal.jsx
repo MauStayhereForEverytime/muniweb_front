@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { pickValidImageFile } from '../../../utils/validateImage';
 import { addImage } from '../../../services/carrouselService';
 
 const AddImageModal = ({ closeModal, refreshImages }) => {
@@ -9,9 +10,9 @@ const AddImageModal = ({ closeModal, refreshImages }) => {
   });
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value, type } = e.target;
     if (type === 'file') {
-      setImageData({ ...imageData, [name]: files?.[0] || null });
+      setImageData({ ...imageData, [name]: pickValidImageFile(e) });
       return;
     }
     setImageData({ ...imageData, [name]: value });

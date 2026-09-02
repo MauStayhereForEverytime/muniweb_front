@@ -7,6 +7,36 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [Unreleased] — Seguridad Fase 3: validación de imágenes subidas (A3)
+
+**Fecha: 2026-09-02. Ver `docs/sessions/SESSION_SEGURIDAD_PENDIENTES.md` §4 y `muniweb_back/docs/sessions/SESSION_SEGURIDAD.md` §11.**
+
+### Added
+- **`src/utils/validateImage.js`**: `validateImageFile(file)` + `pickValidImageFile(e)` — pre-check client-side de extensión (jpg/jpeg/png/gif/webp), content-type y tamaño (≤5 MB, mismos criterios que `muniweb_backend/validators.py`); si falla, alerta, limpia el input y devuelve `null`.
+
+### Changed
+- Los **18** `input type="file"` de imagen ahora usan `pickValidImageFile(e)`: `Blog`, `Innovation`, `NewsList`, `NewsInfo`, `NewsAdmin`, `BlogInfo`, `InnovationInfo`, `CarruselImages`, `Modal1`, `EventosAdmin`, `Add/EditImageModal` (carrousel) y `Add/EditEventImageModal`.
+
+### Notes
+- Pre-check de UX únicamente — la garantía real es la validación server-side del back (400 con magic bytes, polyglotos y tamaño).
+- `pnpm run build` ✓; eslint en los archivos tocados: solo errores preexistentes (`React` sin usar, `prop-types`), ninguno nuevo.
+
+---
+
+## [Unreleased] — Seguridad Fase 2: sanitización XSS en el render (C3)
+
+**Fecha: 2026-09-02. Ver `docs/sessions/SESSION_SEGURIDAD_PENDIENTES.md` §3 y `muniweb_back/docs/sessions/SESSION_SEGURIDAD.md` §10.**
+
+### Added
+- **`dompurify`** a dependencias y nuevo **`src/utils/sanitize.js`** que exporta `sanitizeHtml()` (perfil `html`, hook que fuerza `rel=noopener noreferrer` en enlaces `target="_blank"`, `FORBID_TAGS` de refuerzo).
+- **Sanitización en los 7 renderizados con `dangerouslySetInnerHTML`**: `NewsInfo`, `Home`, `BlogInfo`, `NewsList`, `EventosInfo`, `InnovationInfo`, `NewsAdmin` — ahora envueltos en `sanitizeHtml(...)`.
+
+### Notes
+- Capa cliente complementaria de la sanitización server-side (`nh3` en `save()`) del backend.
+- `pnpm run build` ✓; `pnpm run lint` sin errores nuevos en los archivos tocados (los de `Home.jsx` — `React` y `hasFullText` sin usar — son preexistentes).
+
+---
+
 ## [Unreleased] — Modernización de la página de Integridad a Tailwind
 
 ### Changed

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { pickValidImageFile } from '../../../utils/validateImage';
 import { editImage } from '../../../services/carrouselService';
 
 const EditImageModal = ({ imageId, closeModal, refreshImages, imageDataInitial }) => {
@@ -10,10 +11,10 @@ const EditImageModal = ({ imageId, closeModal, refreshImages, imageDataInitial }
   const [successMessage, setSuccessMessage] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value, type } = e.target;
 
     if (type === 'file') {
-      setImageData({ ...imageData, ima_txt_urlpath: files?.[0] || null });
+      setImageData({ ...imageData, ima_txt_urlpath: pickValidImageFile(e) });
     } else {
       setImageData({ ...imageData, [name]: value });
     }

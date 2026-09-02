@@ -1,4 +1,5 @@
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { pickValidImageFile } from '../../../utils/validateImage';
 import { useState, useEffect } from 'react';
 import {
   fetchEventImages,
@@ -37,12 +38,12 @@ const EventosAdmin = () => {
   };
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) setNewImage({ ...newImage, ima_txt_urlpath: file });
   };
 
   const handleEditImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (file) setEditImageData({ ...editImageData, ima_txt_urlpath: file });
   };
 

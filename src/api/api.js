@@ -78,8 +78,22 @@ export const refreshToken = async () => {
   }
 };
 
-// Función para cerrar sesión (opcional)
-export const logout = () => {
+// Función para cerrar sesión: revoca el refresh token en el servidor (blacklist)
+// y luego limpia el estado local. La revocación es best-effort: si falla
+// (offline/token expirado) se limpia igual y se prosigue al login.
+export const logout = async () => {
+  const refreshTokenValue = localStorage.getItem('refreshToken');
+  if (refreshTokenValue) {
+    try {
+      await apiClient.post(
+        '/logout/',
+        { refresh: refreshTokenValue },
+        { requiresAuth: true }
+      );
+    } catch (error) {
+      console.warn('No se pudo revocar el token en el servidor:', error);
+    }
+  }
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('id');

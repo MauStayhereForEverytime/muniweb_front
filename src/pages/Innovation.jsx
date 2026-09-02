@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { pickValidImageFile } from '../utils/validateImage';
 import Footer from '../components/Footer';
 import InnovationList from '../components/Innovacion/InnovationList';  // Importamos InnovationList
 import { fetchInnovations, createInnovation } from '../services/innovationService';  // Importamos el servicio para obtener y crear innovaciones
@@ -87,7 +88,7 @@ const Innovation = () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  const file = e.target.files[0];
+                  const file = pickValidImageFile(e);
                   if (file) setNewImage(file);
                 }}
                 className="w-full p-2 border border-gray-300 rounded-md"

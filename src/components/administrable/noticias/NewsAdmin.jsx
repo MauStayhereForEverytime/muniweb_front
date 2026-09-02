@@ -1,4 +1,6 @@
 import { FaEdit, FaTrash, FaSearchPlus } from 'react-icons/fa';
+import { sanitizeHtml } from '../../../utils/sanitize';
+import { pickValidImageFile } from '../../../utils/validateImage';
 import { useState, useEffect } from 'react';
 import { fetchNews, createNews, updateNews, deleteNews, mediaUrl } from '../../../services/newsService';
 import QuillEditor from '../../noticias/QuillEditor';
@@ -130,7 +132,7 @@ const NewsAdmin = () => {
   };
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+    const file = pickValidImageFile(e);
     if (!file) return;
     setForm({ ...form, new_txt_urlimage: file });
     setPreview(URL.createObjectURL(file));
@@ -448,7 +450,7 @@ const NewsAdmin = () => {
               {viewingItem.fields.new_txt_content && (
                 <div
                   className="prose max-w-none text-gray-800"
-                  dangerouslySetInnerHTML={{ __html: viewingItem.fields.new_txt_content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(viewingItem.fields.new_txt_content) }}
                 />
               )}
             </div>

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { sanitizeHtml } from '../../utils/sanitize';
+import { pickValidImageFile } from '../../utils/validateImage';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { fetchNewsById, deleteNews, updateNews, fetchNews, mediaUrl } from '../../services/newsService';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -95,7 +97,7 @@ const NewsInfo = () => {
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
-                    const file = e.target.files[0];
+                    const file = pickValidImageFile(e);
                     if (file) setUpdatedImage(file);
                   }}
                   className="w-full p-2 border border-gray-300 rounded"
@@ -114,7 +116,7 @@ const NewsInfo = () => {
                 {news.new_txt_urlimage && <img src={mediaUrl(news.new_txt_urlimage)} alt={news.new_txt_tittle} className="news-image w-full rounded-lg" />}
                 <h1 className="news-title text-2xl font-bold mt-4">{news.new_txt_tittle}</h1>
                 <p className="news-description text-gray-700 mt-2">{news.new_txt_description}</p>
-                <div className="news-content mt-4" dangerouslySetInnerHTML={{ __html: news.new_txt_content }} />
+                <div className="news-content mt-4" dangerouslySetInnerHTML={{ __html: sanitizeHtml(news.new_txt_content) }} />
               </div>
             )}
           </div>

@@ -28,9 +28,9 @@ pnpm run lint     # eslint 9.x — correr tras cada cambio
 
 - Servicios usan `VITE_API_URL` (.env.development/.env.production; no hay secretos en el front).
 - Exportar helper `mediaUrl(path)` de cada servicio para imágenes; maneja URL absoluta, path `/media/` y path bare.
-- Uploads SIEMPRE vía FormData con objeto `File` (nunca base64); guardar con `instanceof File` antes de append; campo `null` al editar sin nueva imagen.
+- Uploads SIEMPRE vía FormData con objeto `File` (nunca base64); guardar con `instanceof File` antes de append; campo `null` al editar sin nueva imagen. Todo `input type="file"` de imagen DEBE pasar por `pickValidImageFile(e)` de `src/utils/validateImage.js` (pre-check extensión/tipo/tamaño; el back valida de verdad con `validate_image_file`).
 - **Auth JWT**: tokens en localStorage (`accessToken`, `refreshToken`, `id`). Escrituras DEBEN usar `apiClient` con `{ requiresAuth: true }` para que el interceptor renueve el token en 401 y redirija a login.
-- Contenido HTML del backend se renderiza con `dangerouslySetInnerHTML` (react-quill) — pendiente sanitizar, ver docs/sessions/SESSION_SEGURIDAD.md.
+- Contenido HTML del backend se renderiza con `dangerouslySetInnerHTML` (react-quill). **SIEMPRE envolver en `sanitizeHtml()` de `src/utils/sanitize.js`** (DOMPurify). El backend además sanitiza al grabar (`nh3`). No introducir `dangerouslySetInnerHTML` sin `sanitizeHtml`. Ver `muniweb_back/docs/sessions/SESSION_SEGURIDAD.md` §10.
 - Imagen slider recomendada 1920×720 px, máx 3 MB.
 
 ## Seguridad

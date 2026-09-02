@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { sanitizeHtml } from '../../utils/sanitize';
+import { pickValidImageFile } from '../../utils/validateImage';
 import { fetchNews, createNews, mediaUrl } from '../../services/newsService';
 import Spinner from './Spinner';
 import QuillEditor from './QuillEditor';
@@ -179,7 +181,7 @@ const NewsList = () => {
               type="file"
               accept="image/*"
               onChange={(e) => {
-                const file = e.target.files[0];
+                const file = pickValidImageFile(e);
                 if (file) setNewImage(file);
               }}
               className="w-full p-2 border border-gray-300 rounded-md"
@@ -311,7 +313,7 @@ const NewsList = () => {
               {viewingItem.fields?.new_txt_content && (
                 <div
                   className="prose max-w-none text-gray-800"
-                  dangerouslySetInnerHTML={{ __html: viewingItem.fields.new_txt_content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(viewingItem.fields.new_txt_content) }}
                 />
               )}
             </div>
