@@ -17,7 +17,7 @@ const Dashboard = () => {
       </section>
 
       {/* Estilos opcionales (puedes modificar o agregar clases CSS) */}
-      <style jsx>{`
+      <style>{`
         .dashboard-container {
           padding: 20px;
           background-color: #f4f4f9;

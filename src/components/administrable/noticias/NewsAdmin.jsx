@@ -143,6 +143,7 @@ const NewsAdmin = () => {
   const contentChars = (f) => stripHtml(f.new_txt_content).length;
 
   const isFormValid = (f) => {
+    if (editingId) return true;
     if (!f.new_txt_urlimage) return false;
     if (hasText(f)) {
       return contentChars(f) >= MIN_CONTENT_CHARS;
@@ -230,7 +231,7 @@ const NewsAdmin = () => {
           Contenido (cuerpo largo)
         </label>
         <QuillEditor value={form.new_txt_content} onChange={(v) => setForm({ ...form, new_txt_content: v })} />
-        {renderContentBadge(contentChars(form), hasText(form))}
+        {renderContentBadge(contentChars(form), !editingId && hasText(form))}
         <input
           className="w-full p-2 mb-2 mt-2 border rounded"
           type="file"
@@ -362,7 +363,7 @@ const NewsAdmin = () => {
               value={form.new_txt_content}
               onChange={(v) => setForm({ ...form, new_txt_content: v })}
             />
-            {renderContentBadge(contentChars(form), hasText(form))}
+            {renderContentBadge(contentChars(form), !editingId && hasText(form))}
             <input
               className="w-full p-2 mb-2 mt-2 border rounded"
               type="file"

@@ -36,10 +36,10 @@ import ley_28024_23062003 from "../../assets/docs/ley_28024_23062003.pdf";
 
 const data = [
   {
-    fecha: "05/02/2026",
+    fecha: "17/04/2026",
     detalle: "COMPROMISO DE INTEGRIDAD INSTITUCIONAL",
     categoria: "Institucional",
-    pdf: "https://www.munimaynas.gob.pe/DOCUMENTOS_VARIOS/COMPROMISO DE INTEGRIDAD INSTITUCIONAL_0001.pdf",
+    pdf: "https://www.gob.pe/institucion/munimaynas/informes-publicaciones/8029515-compromiso-de-integridad-institucional-n-001-vigente",
   },
   {
     fecha: "21/01/2026",
