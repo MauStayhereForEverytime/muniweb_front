@@ -1,7 +1,7 @@
 import React from 'react';
 import mesaAyuda from "../../assets/img/mesa-ayuda-baml.svg";
 import siscolas from "../../assets/img/siscolas.svg";
-import violencia from "../../assets/img/violencia.png";
+import sgtdLogo from "../../assets/img/sgtd_logo_blanco.png";
 import SectionHeader from './SectionHeader';
 
 const cards = [
@@ -20,11 +20,11 @@ const cards = [
       "Es el nuevo sistema de colas en la recepción de la Municipalidad Provincial de Maynas.",
   },
   {
-    img: violencia,
-    alt: "IQTSEG",
-    title: "IQTSEG",
+    img: sgtdLogo,
+    alt: "SGTD",
+    title: "SGTD",
     description:
-      "Es una aplicación en la que el ciudadano podrá subir sus incidencias en tiempo real y la municipalidad responderá de manera inmediata.",
+      "El nuevo sistema de gestión documentaria que mejora la eficiencia en el seguimiento de documentos que permite hacer consultar a la ciudadanía.",
   },
 ];
 
